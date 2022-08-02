@@ -4,5 +4,5 @@
   "sourceFolder": "src",
   "targetFramework": "v5.0",
   "modelPropertyNaming": "PascalCase",
-  "netCoreProjectFile": "true"
+  "netCoreProjectFile": "false"
 }
