@@ -1,0 +1,3220 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Boon Logic Amber API Server",
+    "version": "1.0.3",
+    "title": "Amber API Server"
+  },
+  "host": "amber.boonlogic.com",
+  "basePath": "/v1",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "paths": {
+    "/version": {
+      "get": {
+        "summary": "Retrieves API version information",
+        "operationId": "getVersion",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+        ],
+        "security": [
+          {
+            "authorize-amber-pool": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success, version information returned",
+            "schema": {
+              "$ref": "#/definitions/version"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        }
+      }
+    },
+    "/config": {
+      "get": {
+        "operationId": "getConfig",
+        "summary": "Get the current configuration of a sensor instance",
+        "description": "Returns the current configuration of the sensor instance specified.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "sensorId",
+            "description": "Unique identifier for sensor",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation was successful",
+            "schema": {
+              "$ref": "#/definitions/getConfigResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "security": [
+          {
+            "authorize-amber-pool": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "type": "aws",
+          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:715859896688:function:${stageVariables.lambdaInstance}/invocations",
+          "responses": {
+            ".*code.*400.*": {
+              "statusCode": "400",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            "default": {
+              "statusCode": "200"
+            },
+            ".*code.*401.*": {
+              "statusCode": "401",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*404.*": {
+              "statusCode": "404",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*500.*": {
+              "statusCode": "500",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            }
+          },
+          "requestTemplates": {
+            "application/json": "#set($allParams = $input.params())\n{\n\"endpoint\": \"getConfig\",\n\"tenantId\" : \"$context.authorizer.claims['cognito:username']\",\n\"groups\" : \"$context.authorizer.claims['cognito:groups']\",\n\"bodyJson\" : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n#end\n},\n\"stageVariables\" : {\n#foreach($key in $stageVariables.keySet())\n\"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n    #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"accountId\" : \"$context.identity.accountId\",\n    \"apiId\" : \"$context.apiId\",\n    \"httpMethod\" : \"$context.httpMethod\",\n    \"stage\" : \"$context.stage\",\n    \"sourceIP\" : \"$context.identity.sourceIp\",\n    \"userAgent\" : \"$context.identity.userAgent\",\n    \"requestId\" : \"$context.requestId\",\n    \"resourceId\" : \"$context.resourceId\",\n    \"resourcePath\" : \"$context.resourcePath\"\n    }\n}"
+          },
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
+          "contentHandling": "CONVERT_TO_TEXT"
+        }
+      },
+      "post": {
+        "operationId": "postConfig",
+        "summary": "Apply configuration to a sensor instance",
+        "description": "Applies the provided configuration to the sensor instance specified.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "sensorId",
+            "description": "Unique identifier for sensor",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "postConfigRequest",
+            "description": "Sensor configuration to be applied",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/postConfigRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation was successful",
+            "schema": {
+              "$ref": "#/definitions/postConfigResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "503": {
+            "description": "Server busy",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "security": [
+          {
+            "authorize-amber-pool": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "type": "aws",
+          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:715859896688:function:${stageVariables.lambdaInstance}/invocations",
+          "responses": {
+            ".*code.*400.*": {
+              "statusCode": "400"
+            },
+            "default": {
+              "statusCode": "200"
+            },
+            ".*code.*401.*": {
+              "statusCode": "401",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*404.*": {
+              "statusCode": "404",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*500.*": {
+              "statusCode": "500",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            }
+          },
+          "requestTemplates": {
+            "application/json": "##  See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html\n##  This template will pass through all parameters including path, querystring, header, stage variables, and context through to the integration endpoint via the body/payload\n#set($allParams = $input.params())\n{\n\"endpoint\": \"postConfig\",\n\"tenantId\" : \"$context.authorizer.claims['cognito:username']\",\n\"groups\" : \"$context.authorizer.claims['cognito:groups']\",\n\"bodyJson\" : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n#end\n},\n\"stageVariables\" : {\n#foreach($key in $stageVariables.keySet())\n\"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n    #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"accountId\" : \"$context.identity.accountId\",\n    \"apiId\" : \"$context.apiId\",\n    \"httpMethod\" : \"$context.httpMethod\",\n    \"stage\" : \"$context.stage\",\n    \"sourceIP\" : \"$context.identity.sourceIp\",\n    \"userAgent\" : \"$context.identity.userAgent\",\n    \"requestId\" : \"$context.requestId\",\n    \"resourceId\" : \"$context.resourceId\",\n    \"resourcePath\" : \"$context.resourcePath\"\n    }\n}"
+          },
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
+          "contentHandling": "CONVERT_TO_TEXT"
+        }
+      },
+      "put": {
+        "operationId": "putConfig",
+        "summary": "Update configuration for a sensor instance",
+        "description": "Updates the configuration for the sensor instance specified.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "sensorId",
+            "description": "Unique identifier for sensor",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "putConfigRequest",
+            "description": "Updates to sensor configuration",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/putConfigRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation was successful",
+            "schema": {
+              "$ref": "#/definitions/putConfigResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "503": {
+            "description": "Server busy",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "security": [
+          {
+            "authorize-amber-pool": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "type": "aws",
+          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:715859896688:function:${stageVariables.lambdaInstance}/invocations",
+          "responses": {
+            ".*code.*400.*": {
+              "statusCode": "400"
+            },
+            "default": {
+              "statusCode": "200"
+            },
+            ".*code.*401.*": {
+              "statusCode": "401",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*404.*": {
+              "statusCode": "404",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*500.*": {
+              "statusCode": "500",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            }
+          },
+          "requestTemplates": {
+            "application/json": "##  See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html\n##  This template will pass through all parameters including path, querystring, header, stage variables, and context through to the integration endpoint via the body/payload\n#set($allParams = $input.params())\n{\n\"endpoint\": \"putConfig\",\n\"tenantId\" : \"$context.authorizer.claims['cognito:username']\",\n\"groups\" : \"$context.authorizer.claims['cognito:groups']\",\n\"bodyJson\" : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n#end\n},\n\"stageVariables\" : {\n#foreach($key in $stageVariables.keySet())\n\"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n    #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"accountId\" : \"$context.identity.accountId\",\n    \"apiId\" : \"$context.apiId\",\n    \"httpMethod\" : \"$context.httpMethod\",\n    \"stage\" : \"$context.stage\",\n    \"sourceIP\" : \"$context.identity.sourceIp\",\n    \"userAgent\" : \"$context.identity.userAgent\",\n    \"requestId\" : \"$context.requestId\",\n    \"resourceId\" : \"$context.resourceId\",\n    \"resourcePath\" : \"$context.resourcePath\"\n    }\n}"
+          },
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "PUT",
+          "contentHandling": "CONVERT_TO_TEXT"
+        }
+      }
+    },
+    "/oauth2": {
+      "post": {
+        "operationId": "postOauth2",
+        "summary": "Request a bearer token using Amber account credentials",
+        "description": "Requests a bearer token using Amber account credentials. The requested bearer token is returned as the \"id-token\" response attribute. This token is to be used for authenticating API requests throughout a usage session and expires after 60 minutes.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "description": "Account credentials to be used for authentication",
+            "name": "postAuth2Request",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/postAuth2Request"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation was successful",
+            "schema": {
+              "$ref": "#/definitions/postAuth2Response"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "type": "aws",
+          "credentials": "arn:aws:iam::715859896688:role/AmberCloudLambdaRoles",
+          "uri": "arn:aws:apigateway:us-east-1:cognito-idp:action/AdminInitiateAuth",
+          "responses": {
+            "4\\d{2}": {
+              "statusCode": "401",
+              "responseTemplates": {
+                "application/json": "#set($inputRoot = $input.path('$'))\n{\n  \"code\" : 401,\n  \"message\" : \"$inputRoot.message\"\n}"
+              }
+            },
+            "default": {
+              "statusCode": "200",
+              "responseTemplates": {
+                "application/json": "#set($inputRoot = $input.path('$'))\n{\n    \"idToken\" : \"$inputRoot.AuthenticationResult.IdToken\",\n    \"expiresIn\" : \"$inputRoot.AuthenticationResult.ExpiresIn\",\n    \"refreshToken\" : \"$inputRoot.AuthenticationResult.RefreshToken\",\n    \"tokenType\" : \"$inputRoot.AuthenticationResult.TokenType\"\n}"
+              }
+            },
+            "5\\d{2}": {
+              "statusCode": "500",
+              "responseTemplates": {
+                "application/json": "#set($inputRoot = $input.path('$'))\n{\n  \"code\" : 500,\n  \"message\" : \"$inputRoot.message\"\n}"
+              }
+            }
+          },
+          "requestTemplates": {
+            "application/json": "{\n   \"AuthFlow\": \"ADMIN_USER_PASSWORD_AUTH\",\n   \"AuthParameters\": { \n      \"USERNAME\" : $input.json('username'),\n      \"PASSWORD\" : $input.json('password')\n   },\n   \"ClientId\": \"3mahdvm2e6u9lvnkbk69maj9h0\",\n   \"UserPoolId\": \"us-east-1_t3n2fhPEl\"\n}"
+          },
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST"
+        }
+      }
+    },
+    "/outage": {
+      "post": {
+        "operationId": "postOutage",
+        "summary": "Informs the server of an outage",
+        "description": "Clears the load buffer of streaming window and resets statistics. Returns stream status",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "sensorId",
+            "description": "Unique identifier for sensor",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation was successful",
+            "schema": {
+              "$ref": "#/definitions/postOutageResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "security": [
+          {
+            "authorize-amber-pool": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "type": "aws",
+          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:715859896688:function:${stageVariables.lambdaInstance}/invocations",
+          "responses": {
+            ".*code.*400.*": {
+              "statusCode": "400",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            "default": {
+              "statusCode": "200"
+            },
+            ".*code.*401.*": {
+              "statusCode": "401",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*404.*": {
+              "statusCode": "404",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*500.*": {
+              "statusCode": "500",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            }
+          },
+          "requestTemplates": {
+            "application/json": "#set($allParams = $input.params())\n{\n\"endpoint\": \"postSensor\",\n\"tenantId\" : \"$context.authorizer.claims['cognito:username']\",\n\"groups\" : \"$context.authorizer.claims['cognito:groups']\",\n\"bodyJson\" : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n#end\n},\n\"stageVariables\" : {\n#foreach($key in $stageVariables.keySet())\n\"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n    #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"accountId\" : \"$context.identity.accountId\",\n    \"apiId\" : \"$context.apiId\",\n    \"httpMethod\" : \"$context.httpMethod\",\n    \"stage\" : \"$context.stage\",\n    \"sourceIP\" : \"$context.identity.sourceIp\",\n    \"userAgent\" : \"$context.identity.userAgent\",\n    \"requestId\" : \"$context.requestId\",\n    \"resourceId\" : \"$context.resourceId\",\n    \"resourcePath\" : \"$context.resourcePath\"\n    }\n}"
+          },
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
+          "contentHandling": "CONVERT_TO_TEXT"
+        }
+      }
+    },
+    "/sensor": {
+      "get": {
+        "operationId": "getSensor",
+        "summary": "Get basic information about a sensor instance",
+        "description": "Returns basic information about an existing sensor instance.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "sensorId",
+            "description": "Unique identifier for sensor",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation was successful",
+            "schema": {
+              "$ref": "#/definitions/getSensorResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "security": [
+          {
+            "authorize-amber-pool": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "type": "aws",
+          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:715859896688:function:${stageVariables.lambdaInstance}/invocations",
+          "responses": {
+            ".*code.*400.*": {
+              "statusCode": "400",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            "default": {
+              "statusCode": "200"
+            },
+            ".*code.*401.*": {
+              "statusCode": "401",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*404.*": {
+              "statusCode": "404",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*500.*": {
+              "statusCode": "500",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            }
+          },
+          "requestTemplates": {
+            "application/json": "##  See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html\n##  This template will pass through all parameters including path, querystring, header, stage variables, and context through to the integration endpoint via the body/payload\n#set($allParams = $input.params())\n{\n\"endpoint\": \"getSensor\",\n\"tenantId\" : \"$context.authorizer.claims['cognito:username']\",\n\"groups\" : \"$context.authorizer.claims['cognito:groups']\",\n\"bodyJson\" : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n#end\n},\n\"stageVariables\" : {\n#foreach($key in $stageVariables.keySet())\n\"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n    #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"accountId\" : \"$context.identity.accountId\",\n    \"apiId\" : \"$context.apiId\",\n    \"httpMethod\" : \"$context.httpMethod\",\n    \"stage\" : \"$context.stage\",\n    \"sourceIP\" : \"$context.identity.sourceIp\",\n    \"userAgent\" : \"$context.identity.userAgent\",\n    \"requestId\" : \"$context.requestId\",\n    \"resourceId\" : \"$context.resourceId\",\n    \"resourcePath\" : \"$context.resourcePath\"\n    }\n}"
+          },
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
+          "contentHandling": "CONVERT_TO_TEXT"
+        }
+      },
+      "post": {
+        "operationId": "postSensor",
+        "summary": "Create a new a sensor instance",
+        "description": "Spawns a new sensor instance, returning its unique sensorId.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "description": "Label for new sensor instance to be created",
+            "name": "postSensorRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/postSensorRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation was successful",
+            "schema": {
+              "$ref": "#/definitions/postSensorResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "security": [
+          {
+            "authorize-amber-pool": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "type": "aws",
+          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:715859896688:function:${stageVariables.lambdaInstance}/invocations",
+          "responses": {
+            ".*code.*400.*": {
+              "statusCode": "400",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            "default": {
+              "statusCode": "200"
+            },
+            ".*code.*401.*": {
+              "statusCode": "401",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*404.*": {
+              "statusCode": "404",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*500.*": {
+              "statusCode": "500",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            }
+          },
+          "requestTemplates": {
+            "application/json": "#set($allParams = $input.params())\n{\n\"endpoint\": \"postSensor\",\n\"tenantId\" : \"$context.authorizer.claims['cognito:username']\",\n\"groups\" : \"$context.authorizer.claims['cognito:groups']\",\n\"bodyJson\" : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n#end\n},\n\"stageVariables\" : {\n#foreach($key in $stageVariables.keySet())\n\"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n    #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"accountId\" : \"$context.identity.accountId\",\n    \"apiId\" : \"$context.apiId\",\n    \"httpMethod\" : \"$context.httpMethod\",\n    \"stage\" : \"$context.stage\",\n    \"sourceIP\" : \"$context.identity.sourceIp\",\n    \"userAgent\" : \"$context.identity.userAgent\",\n    \"requestId\" : \"$context.requestId\",\n    \"resourceId\" : \"$context.resourceId\",\n    \"resourcePath\" : \"$context.resourcePath\"\n    }\n}"
+          },
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
+          "contentHandling": "CONVERT_TO_TEXT"
+        }
+      },
+      "put": {
+        "operationId": "putSensor",
+        "summary": "Update label for a sensor instance",
+        "description": "Changes the label of an existing sensor instance to the new label specified.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "sensorId",
+            "description": "Unique identifier for sensor",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "putSensorRequest",
+            "description": "New label to apply to sensor instance",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/putSensorRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation was successful",
+            "schema": {
+              "$ref": "#/definitions/putSensorResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "security": [
+          {
+            "authorize-amber-pool": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "type": "aws",
+          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:715859896688:function:${stageVariables.lambdaInstance}/invocations",
+          "responses": {
+            ".*code.*400.*": {
+              "statusCode": "400",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            "default": {
+              "statusCode": "200"
+            },
+            ".*code.*401.*": {
+              "statusCode": "401",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*404.*": {
+              "statusCode": "404",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*500.*": {
+              "statusCode": "500",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            }
+          },
+          "requestTemplates": {
+            "application/json": "#set($allParams = $input.params())\n{\n\"endpoint\": \"putSensor\",\n\"tenantId\" : \"$context.authorizer.claims['cognito:username']\",\n\"groups\" : \"$context.authorizer.claims['cognito:groups']\",\n\"bodyJson\" : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n#end\n},\n\"stageVariables\" : {\n#foreach($key in $stageVariables.keySet())\n\"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n    #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"accountId\" : \"$context.identity.accountId\",\n    \"apiId\" : \"$context.apiId\",\n    \"httpMethod\" : \"$context.httpMethod\",\n    \"stage\" : \"$context.stage\",\n    \"sourceIP\" : \"$context.identity.sourceIp\",\n    \"userAgent\" : \"$context.identity.userAgent\",\n    \"requestId\" : \"$context.requestId\",\n    \"resourceId\" : \"$context.resourceId\",\n    \"resourcePath\" : \"$context.resourcePath\"\n    }\n}"
+          },
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
+          "contentHandling": "CONVERT_TO_TEXT"
+        }
+      },
+      "delete": {
+        "operationId": "deleteSensor",
+        "summary": "Delete a sensor instance",
+        "description": "Deletes the sensor instance with the specified sensorId.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "sensorId",
+            "description": "Unique identifier for sensor",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation was successful",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "security": [
+          {
+            "authorize-amber-pool": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "type": "aws",
+          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:715859896688:function:${stageVariables.lambdaInstance}/invocations",
+          "responses": {
+            ".*code.*400.*": {
+              "statusCode": "400",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            "default": {
+              "statusCode": "200"
+            },
+            ".*code.*401.*": {
+              "statusCode": "401",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*404.*": {
+              "statusCode": "404",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*500.*": {
+              "statusCode": "500",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            }
+          },
+          "requestTemplates": {
+            "application/json": "#set($allParams = $input.params())\n{\n\"endpoint\": \"deleteSensor\",\n\"tenantId\" : \"$context.authorizer.claims['cognito:username']\",\n\"groups\" : \"$context.authorizer.claims['cognito:groups']\",\n\"bodyJson\" : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n#end\n},\n\"stageVariables\" : {\n#foreach($key in $stageVariables.keySet())\n\"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n    #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"accountId\" : \"$context.identity.accountId\",\n    \"apiId\" : \"$context.apiId\",\n    \"httpMethod\" : \"$context.httpMethod\",\n    \"stage\" : \"$context.stage\",\n    \"sourceIP\" : \"$context.identity.sourceIp\",\n    \"userAgent\" : \"$context.identity.userAgent\",\n    \"requestId\" : \"$context.requestId\",\n    \"resourceId\" : \"$context.resourceId\",\n    \"resourcePath\" : \"$context.resourcePath\"\n    }\n}"
+          },
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
+          "contentHandling": "CONVERT_TO_TEXT"
+        }
+      }
+    },
+    "/sensors": {
+      "get": {
+        "operationId": "getSensors",
+        "summary": "List all sensors for this user",
+        "description": "Returns a list of all current sensor instances for this user.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation was successful",
+            "schema": {
+              "$ref": "#/definitions/getSensorsResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "security": [
+          {
+            "authorize-amber-pool": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "type": "aws",
+          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:715859896688:function:${stageVariables.lambdaInstance}/invocations",
+          "responses": {
+            "default": {
+              "statusCode": "200"
+            },
+            ".*code.*500.": {
+              "statusCode": "500",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*400.": {
+              "statusCode": "400",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*401.": {
+              "statusCode": "401",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*404.": {
+              "statusCode": "404",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            }
+          },
+          "requestTemplates": {
+            "application/json": "##  See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-refer.html\n\n#set($allParams = $input.params())\n{\n\"endpoint\": \"getSensors\",\n\"tenantId\" : \"$context.authorizer.claims['cognito:username']\",\n\"groups\" : \"$context.authorizer.claims['cognito:groups']\",\n\"bodyJson\" : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n#end\n},\n\"stageVariables\" : {\n#foreach($key in $stageVariables.keySet())\n\"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n    #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"accountId\" : \"$context.identity.accountId\",\n    \"apiId\" : \"$context.apiId\",\n    \"httpMethod\" : \"$context.httpMethod\",\n    \"stage\" : \"$context.stage\",\n    \"sourceIP\" : \"$context.identity.sourceIp\",\n    \"userAgent\" : \"$context.identity.userAgent\",\n    \"requestId\" : \"$context.requestId\",\n    \"resourceId\" : \"$context.resourceId\",\n    \"resourcePath\" : \"$context.resourcePath\"\n    }\n}\n"
+          },
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
+          "contentHandling": "CONVERT_TO_TEXT"
+        }
+      }
+    },
+    "/status": {
+      "get": {
+        "summary": "Get analytic information from a sensor",
+        "description": "Returns analytic information derived from data processed by a sensor thus far.",
+        "operationId": "getStatus",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "sensorId",
+            "description": "Unique identifier for sensor",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation was successful",
+            "schema": {
+              "$ref": "#/definitions/getStatusResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "security": [
+          {
+            "authorize-amber-pool": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "type": "aws",
+          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:715859896688:function:${stageVariables.lambdaInstance}/invocations",
+          "responses": {
+            ".*code.*400.*": {
+              "statusCode": "400",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            "default": {
+              "statusCode": "200"
+            },
+            ".*code.*401.*": {
+              "statusCode": "401",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*404.*": {
+              "statusCode": "404",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*500.*": {
+              "statusCode": "500",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            }
+          },
+          "requestTemplates": {
+            "application/json": "#set($allParams = $input.params())\n{\n\"endpoint\": \"getStatus\",\n\"tenantId\" : \"$context.authorizer.claims['cognito:username']\",\n\"groups\" : \"$context.authorizer.claims['cognito:groups']\",\n\"bodyJson\" : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n#end\n},\n\"stageVariables\" : {\n#foreach($key in $stageVariables.keySet())\n\"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n    #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"accountId\" : \"$context.identity.accountId\",\n    \"apiId\" : \"$context.apiId\",\n    \"httpMethod\" : \"$context.httpMethod\",\n    \"stage\" : \"$context.stage\",\n    \"sourceIP\" : \"$context.identity.sourceIp\",\n    \"userAgent\" : \"$context.identity.userAgent\",\n    \"requestId\" : \"$context.requestId\",\n    \"resourceId\" : \"$context.resourceId\",\n    \"resourcePath\" : \"$context.resourcePath\"\n    }\n}"
+          },
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
+          "contentHandling": "CONVERT_TO_TEXT"
+        }
+      }
+    },
+    "/stream": {
+      "post": {
+        "summary": "Stream data to a sensor",
+        "description": "Sends data to a sensor. Ingoing data should be formatted as a simple string of comma-separated numbers with no spaces.\n\nThe following analytic results are returned:\n- state : sensor state as of this call (one of: \"Buffering\", \"Autotuning\", \"Learning\", \"Monitoring\", \"Error\")\n- ID : array of cluster IDs. These correspond one-to-one with input samples, indicating the cluster to which each input pattern was assigned.\n- SI : array of smoothed anomaly index values. These values correspond one-to-one with the input samples and range between 0 and 1000. Values closer to 0 represent input patterns which are ordinary given the data seen so far on this sensor. Values closer to 1000 represent novel patterns which are anomalous with respect to data seen before.\n- AD : array of 0's and 1's as anomaly detection indicators. These correspond one-to-one with input samples and are produced by thresholding the smoothed anomaly index (SI). The threshold is determined automatically from the SI values. A value of 0 indicates that the SI has not exceeded the anomaly detection threshold. A value of 1 indicates it has, signaling an anomaly at the corresponding input sample.\n- AH : array of anomaly history values. These values are a moving-window sum of the AD, giving the number of anomaly detections (1's) present in the AD signal over a \"recent history\" window whose length is the buffer size.\n- AM : array of Amber Metric values. These are floating-point values between 0.0 and 1.0 indicating the extent to which the AH contains an unusually high number of anomalies in recent history. The values are derived statistically from a Poisson model, with values close to 0.0 signaling a lower, and values close to 1.0 signaling a higher, frequency of anomalies than usual.\n- AW : array of Amber Warning Level values. This index is produced by thresholding the Amber Metric (AM) and takes on the values 0, 1 or 2 representing a discrete \"warning level\" for an asset based on the frequency of anomalies within recent history. 0 = normal, 1 = asset changing, 2 = asset critical. The default thresholds for the two warning levels are the standard statistical values of 0.95 (outlier, asset changing) and 0.997 (extreme outlier, asset critical).",
+        "operationId": "postStream",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "sensorId",
+            "description": "Unique identifier for sensor",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "postStreamRequest",
+            "description": "Data to be streamed to sensor. Should be formatted as a simple string of comma-separated numbers with no spaces (e.g. \"0,0.5,1,1.5,2\").",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/postStreamRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation was successful",
+            "schema": {
+              "$ref": "#/definitions/postStreamResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "503": {
+            "description": "Server busy",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "security": [
+          {
+            "authorize-amber-pool": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "type": "aws",
+          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:715859896688:function:${stageVariables.lambdaInstance}/invocations",
+          "responses": {
+            ".*code.*400.*": {
+              "statusCode": "400",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            "default": {
+              "statusCode": "200"
+            },
+            ".*code.*401.*": {
+              "statusCode": "401",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*404.*": {
+              "statusCode": "404",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*500.*": {
+              "statusCode": "500",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            }
+          },
+          "requestTemplates": {
+            "application/json": "#set($allParams = $input.params())\n{\n\"endpoint\": \"postStream\",\n\"tenantId\" : \"$context.authorizer.claims['cognito:username']\",\n\"groups\" : \"$context.authorizer.claims['cognito:groups']\",\n\"bodyJson\" : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n#end\n},\n\"stageVariables\" : {\n#foreach($key in $stageVariables.keySet())\n\"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n    #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"accountId\" : \"$context.identity.accountId\",\n    \"apiId\" : \"$context.apiId\",\n    \"httpMethod\" : \"$context.httpMethod\",\n    \"stage\" : \"$context.stage\",\n    \"sourceIP\" : \"$context.identity.sourceIp\",\n    \"userAgent\" : \"$context.identity.userAgent\",\n    \"requestId\" : \"$context.requestId\",\n    \"resourceId\" : \"$context.resourceId\",\n    \"resourcePath\" : \"$context.resourcePath\"\n    }\n}"
+          },
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
+          "contentHandling": "CONVERT_TO_TEXT"
+        }
+      },
+      "put": {
+        "summary": "Stream data to a sensor fusion vector",
+        "description": "Update fusion vector with new values for the given features, and optionally submit to Amber. Analytic results returned are the same as POST /stream.",
+        "operationId": "putStream",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "sensorId",
+            "description": "Unique identifier for sensor",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "putStreamRequest",
+            "description": "New values for sensor fusion vector.",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/putStreamRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Vector has been updated and analytics were run.",
+            "schema": {
+              "$ref": "#/definitions/putStreamResponse"
+            }
+          },
+          "202": {
+            "description": "Vector has been updated but no analytics were run.",
+            "schema": {
+              "$ref": "#/definitions/putStreamResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "503": {
+            "description": "Server busy",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "security": [
+          {
+            "authorize-amber-pool": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "type": "aws",
+          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:715859896688:function:${stageVariables.lambdaInstance}/invocations",
+          "responses": {
+            ".*code.*400.*": {
+              "statusCode": "400",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            "default": {
+              "statusCode": "200"
+            },
+            ".*code.*401.*": {
+              "statusCode": "401",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*404.*": {
+              "statusCode": "404",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*500.*": {
+              "statusCode": "500",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            }
+          },
+          "requestTemplates": {
+            "application/json": "#set($allParams = $input.params())\n{\n\"endpoint\": \"putStream\",\n\"tenantId\" : \"$context.authorizer.claims['cognito:username']\",\n\"groups\" : \"$context.authorizer.claims['cognito:groups']\",\n\"bodyJson\" : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n#end\n},\n\"stageVariables\" : {\n#foreach($key in $stageVariables.keySet())\n\"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n    #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"accountId\" : \"$context.identity.accountId\",\n    \"apiId\" : \"$context.apiId\",\n    \"httpMethod\" : \"$context.httpMethod\",\n    \"stage\" : \"$context.stage\",\n    \"sourceIP\" : \"$context.identity.sourceIp\",\n    \"userAgent\" : \"$context.identity.userAgent\",\n    \"requestId\" : \"$context.requestId\",\n    \"resourceId\" : \"$context.resourceId\",\n    \"resourcePath\" : \"$context.resourcePath\"\n    }\n}"
+          },
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "PUT",
+          "contentHandling": "CONVERT_TO_TEXT"
+        }
+      }
+    },
+    "/__summary": {
+      "get": {
+        "operationId": "getAmberSummary",
+        "summary": "Get the JSON block of the amber image",
+        "description": "Returns the json block of the amber sensor",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "sensorId",
+            "description": "Unique identifier for sensor",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation was successful",
+            "schema": {
+              "$ref": "#/definitions/getSummaryResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "security": [
+          {
+            "authorize-amber-pool": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "type": "aws",
+          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:715859896688:function:${stageVariables.lambdaInstance}/invocations",
+          "responses": {
+            ".*code.*400.*": {
+              "statusCode": "400",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            "default": {
+              "statusCode": "200"
+            },
+            ".*code.*401.*": {
+              "statusCode": "401",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*404.*": {
+              "statusCode": "404",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*500.*": {
+              "statusCode": "500",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            }
+          },
+          "requestTemplates": {
+            "application/json": "#set($allParams = $input.params())\n{\n\"endpoint\": \"getAmberSummary\",\n\"tenantId\" : \"$context.authorizer.claims['cognito:username']\",\n\"groups\" : \"$context.authorizer.claims['cognito:groups']\",\n\"bodyJson\" : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n#end\n},\n\"stageVariables\" : {\n#foreach($key in $stageVariables.keySet())\n\"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n    #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"accountId\" : \"$context.identity.accountId\",\n    \"apiId\" : \"$context.apiId\",\n    \"httpMethod\" : \"$context.httpMethod\",\n    \"stage\" : \"$context.stage\",\n    \"sourceIP\" : \"$context.identity.sourceIp\",\n    \"userAgent\" : \"$context.identity.userAgent\",\n    \"requestId\" : \"$context.requestId\",\n    \"resourceId\" : \"$context.resourceId\",\n    \"resourcePath\" : \"$context.resourcePath\"\n    }\n}"
+          },
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
+          "contentHandling": "CONVERT_TO_TEXT"
+        }
+      }
+    },
+    "/rootCause": {
+      "get": {
+        "summary": "Get root cause analysis information from a sensor",
+        "description": "Returns analytic information on the root cause for the clusters provided.",
+        "operationId": "getRootCause",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "sensorId",
+            "description": "Unique identifier for sensor",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "clusterID",
+            "in": "query",
+            "description": "An array of cluster IDs",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "pattern",
+            "in": "query",
+            "description": "Patterns to compare to the nano model for the root cause analysis",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation was successful",
+            "schema": {
+              "$ref": "#/definitions/getRootCauseResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "security": [
+          {
+            "authorize-amber-pool": []
+          }
+        ],
+        "x-amazon-apigateway-integration": {
+          "type": "aws",
+          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:715859896688:function:${stageVariables.lambdaInstance}/invocations",
+          "responses": {
+            ".*code.*400.*": {
+              "statusCode": "400",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            "default": {
+              "statusCode": "200"
+            },
+            ".*code.*401.*": {
+              "statusCode": "401",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*404.*": {
+              "statusCode": "404",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            },
+            ".*code.*500.*": {
+              "statusCode": "500",
+              "responseTemplates": {
+                "application/json": "$input.path('$.errorMessage')"
+              }
+            }
+          },
+          "requestTemplates": {
+            "application/json": "#set($allParams = $input.params())\n{\n\"endpoint\": \"getStatus\",\n\"tenantId\" : \"$context.authorizer.claims['cognito:username']\",\n\"groups\" : \"$context.authorizer.claims['cognito:groups']\",\n\"bodyJson\" : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n#end\n},\n\"stageVariables\" : {\n#foreach($key in $stageVariables.keySet())\n\"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n    #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"accountId\" : \"$context.identity.accountId\",\n    \"apiId\" : \"$context.apiId\",\n    \"httpMethod\" : \"$context.httpMethod\",\n    \"stage\" : \"$context.stage\",\n    \"sourceIP\" : \"$context.identity.sourceIp\",\n    \"userAgent\" : \"$context.identity.userAgent\",\n    \"requestId\" : \"$context.requestId\",\n    \"resourceId\" : \"$context.resourceId\",\n    \"resourcePath\" : \"$context.resourcePath\"\n    }\n}"
+          },
+          "passthroughBehavior": "when_no_templates",
+          "httpMethod": "POST",
+          "contentHandling": "CONVERT_TO_TEXT"
+        }
+      }
+    },
+    "/pretrain": {
+      "post": {
+        "summary": "Pretrain a sensor using historical data",
+        "description": "Pretrains a sensor. Ingoing data should be formatted as a simple string of comma-separated numbers with no spaces.",
+        "operationId": "postPretrain",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "sensorId",
+            "description": "Unique identifier for sensor",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "amberChunk",
+            "description": "Specification of chunk, 1:3 2:3 3:3 for example",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "amberTransaction",
+            "description": "Unique identifier for chunk transactions",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "description": "Data to be streamed to sensor. Should be formatted as a simple string of comma-separated numbers with no spaces (e.g. \"0,0.5,1,1.5,2\").",
+            "in": "body",
+            "name": "postPretrainRequest",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/postPretrainRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation was successful",
+            "schema": {
+              "$ref": "#/definitions/postPretrainResponse"
+            }
+          },
+          "202": {
+            "description": "Operation was accepted",
+            "headers": {
+              "amberTransaction": {
+                "type": "string"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/postPretrainResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "503": {
+            "description": "Server is busy",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "security": [
+          {
+            "authorize-amber-pool": []
+          }
+        ]
+      },
+      "get": {
+        "summary": "Get status of pretrain operation",
+        "description": "Get status of a sensor which is currently pretraining.",
+        "operationId": "getPretrain",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "sensorId",
+            "description": "Unique identifier for sensor",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sensor is not pretraining",
+            "schema": {
+              "$ref": "#/definitions/getPretrainResponse"
+            }
+          },
+          "202": {
+            "description": "Sensor is currently pretraining",
+            "schema": {
+              "$ref": "#/definitions/getPretrainResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          },
+          "404": {
+            "description": "The specified resource was not found",
+            "schema": {
+              "$ref": "#/definitions/Error"
+            }
+          }
+        },
+        "security": [
+          {
+            "authorize-amber-pool": []
+          }
+        ]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "authorize-amber-pool": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "x-amazon-apigateway-authtype": "cognito_user_pools",
+      "x-amazon-apigateway-authorizer": {
+        "type": "cognito_user_pools",
+        "providerARNs": [
+          "arn:aws:cognito-idp:us-east-1:715859896688:userpool/us-east-1_t3n2fhPEl"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "version": {
+      "required": [
+        "release",
+        "api-version",
+        "builder",
+        "expert-api",
+        "expert-common",
+        "nano-secure",
+        "swagger-ui"
+      ],
+      "properties": {
+        "release": {
+          "type": "string"
+        },
+        "api-version": {
+          "type": "string"
+        },
+        "builder": {
+          "type": "string"
+        },
+        "expert-api": {
+          "type": "string"
+        },
+        "expert-common": {
+          "type": "string"
+        },
+        "nano-secure": {
+          "type": "string"
+        },
+        "swagger-ui": {
+          "type": "string"
+        }
+      }
+    },
+    "postPretrainRequest": {
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "data": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string",
+          "default": "csv",
+          "description": "format of 'data' field, [csv | b64float]"
+        },
+        "autotuneConfig": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+    "postPretrainResponse": {
+      "required": [
+        "state"
+      ],
+      "properties": {
+        "state": {
+          "description": "state of pretraining, one of: Chunking, Pretraining, Pretrained, Error",
+          "type": "string"
+        },
+        "amberTransaction": {
+          "type": "string"
+        },
+        "amberChunk": {
+          "type": "string"
+        },
+        "message": {
+          "description": "latest pretrain message",
+          "type": "string"
+        }
+      }
+    },
+    "getPretrainResponse": {
+      "required": [
+        "state"
+      ],
+      "properties": {
+        "state": {
+          "description": "state of pretraining, one of: None, Chunking, Pretraining, Pretrained, Error",
+          "type": "string"
+        },
+        "message": {
+          "description": "latest pretrain message",
+          "type": "string"
+        }
+      }
+    },
+    "getStatusResponse": {
+      "required": [
+        "pca",
+        "clusterGrowth",
+        "clusterSizes",
+        "anomalyIndexes",
+        "frequencyIndexes",
+        "distanceIndexes",
+        "totalInferences",
+        "numClusters",
+        "anomalyThreshold",
+        "state"
+      ],
+      "properties": {
+        "pca": {
+          "$ref": "#/definitions/PCA"
+        },
+        "clusterGrowth": {
+          "$ref": "#/definitions/uint64Array"
+        },
+        "clusterSizes": {
+          "$ref": "#/definitions/uint64Array"
+        },
+        "anomalyIndexes": {
+          "$ref": "#/definitions/uint16Array"
+        },
+        "frequencyIndexes": {
+          "$ref": "#/definitions/uint16Array"
+        },
+        "distanceIndexes": {
+          "$ref": "#/definitions/uint16Array"
+        },
+        "totalInferences": {
+          "type": "number",
+          "format": "uint64",
+          "description": "inferences since the most recent restart"
+        },
+        "numClusters": {
+          "type": "number",
+          "format": "uint64"
+        },
+        "anomalyThreshold": {
+          "type": "integer",
+          "format": "uint16"
+        },
+        "state": {
+          "type": "string",
+          "description": "state of the sensor. Possible state variables are: Error, Buffering, Autotuning, Learning, Monitoring"
+        }
+      }
+    },
+    "getConfigResponse": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/streamingParameters"
+        },
+        {
+          "required": [
+            "featureCount",
+            "streamingWindowSize",
+            "features",
+            "percentVariation",
+            "samplesToBuffer"
+          ],
+          "properties": {
+            "featureCount": {
+              "type": "integer",
+              "format": "uint16",
+              "description": "number of features per sample"
+            },
+            "streamingWindowSize": {
+              "type": "integer",
+              "format": "uint16",
+              "description": "streaming window size",
+              "maximum": 500
+            },
+            "features": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/featureConfig"
+              }
+            },
+            "percentVariation": {
+              "type": "number",
+              "format": "float",
+              "description": "the percent variation (for instance, 0.025 gives 2.5% variation) used for clustering"
+            },
+            "samplesToBuffer": {
+              "type": "number",
+              "format": "uint32",
+              "description": "the number of samples to be applied before autotuning begins",
+              "default": 10000
+            },
+            "percentVariationOverride": {
+              "type": "number",
+              "format": "float",
+              "description": "override autotuned percent variation with this value"
+            }
+          }
+        }
+      ]
+    },
+    "putSensorRequest": {
+      "required": [
+        "label"
+      ],
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Label to be updated for sensor"
+        }
+      }
+    },
+    "putConfigRequest": {
+      "properties": {
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/fusionConfig"
+          }
+        },
+        "streaming": {
+          "$ref": "#/definitions/streamingParameters"
+        }
+      }
+    },
+    "putConfigResponse": {
+      "properties": {
+        "features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/fusionConfig"
+          }
+        },
+        "streaming": {
+          "$ref": "#/definitions/streamingParameters"
+        }
+      }
+    },
+    "streamingParameters": {
+      "properties": {
+        "anomalyHistoryWindow": {
+          "type": "number",
+          "format": "uint32",
+          "description": "the number of samples to use when calculating AH",
+          "default": 10000
+        },
+        "learningRateNumerator": {
+          "type": "number",
+          "format": "uint64",
+          "description": "enables graduation requirements for learning",
+          "default": 10
+        },
+        "learningRateDenominator": {
+          "type": "number",
+          "format": "uint64",
+          "description": "enables graduation requirements for learning",
+          "default": 10000
+        },
+        "learningMaxClusters": {
+          "type": "number",
+          "format": "uint16",
+          "description": "learning graduation requirement for stopping learning upon reaching this cluster count",
+          "default": 1000
+        },
+        "learningMaxSamples": {
+          "type": "number",
+          "format": "uint64",
+          "description": "learning graduation requirement for stopping learning after acquiring this many samples",
+          "default": 1000000
+        }
+      }
+    },
+    "postConfigRequest": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/streamingParameters"
+        },
+        {
+          "required": [
+            "featureCount",
+            "streamingWindowSize"
+          ],
+          "properties": {
+            "featureCount": {
+              "type": "integer",
+              "format": "uint16",
+              "description": "number of features per sample",
+              "minimum": 1
+            },
+            "streamingWindowSize": {
+              "type": "integer",
+              "format": "uint16",
+              "description": "streaming window size",
+              "maximum": 500
+            },
+            "features": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/featureConfig"
+              }
+            },
+            "samplesToBuffer": {
+              "type": "number",
+              "format": "uint32",
+              "description": "the number of samples to be applied before autotuning begins",
+              "default": 10000
+            },
+            "percentVariationOverride": {
+              "type": "number",
+              "format": "float",
+              "description": "override autotuned percent variation with this value",
+              "default": -1
+            }
+          }
+        }
+      ]
+    },
+    "getRootCauseResponse": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/float32Array"
+      }
+    },
+    "Error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "uint16"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "postAuth2Request": {
+      "required": [
+        "password",
+        "username"
+      ],
+      "properties": {
+        "username": {
+          "type": "string",
+          "description": "Username for authenticating"
+        },
+        "password": {
+          "type": "string",
+          "description": "Password for authenticating"
+        }
+      }
+    },
+    "sensorInstance": {
+      "required": [
+        "label",
+        "sensorId"
+      ],
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Additional label to be assigned for sensor"
+        },
+        "sensorId": {
+          "type": "string",
+          "description": "Unique identifier for sensor"
+        }
+      }
+    },
+    "postOutageResponse": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/streamStatus"
+        }
+      ]
+    },
+    "postSensorResponse": {
+      "required": [
+        "label",
+        "sensorId"
+      ],
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Additional label to be assigned for sensor"
+        },
+        "sensorId": {
+          "type": "string",
+          "description": "Unique identifier for sensor"
+        }
+      }
+    },
+    "putSensorResponse": {
+      "required": [
+        "label",
+        "sensorId"
+      ],
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Additional label to be assigned for sensor"
+        },
+        "sensorId": {
+          "type": "string",
+          "description": "Unique identifier for sensor"
+        }
+      }
+    },
+    "uint64Array": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "format": "uint64"
+      }
+    },
+    "float32Array": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "format": "float"
+      }
+    },
+    "postStreamRequest": {
+      "required": [
+        "data"
+      ],
+      "properties": {
+        "saveImage": {
+          "type": "boolean",
+          "description": "save the sensor after calculation",
+          "default": true
+        },
+        "data": {
+          "type": "string"
+        }
+      }
+    },
+    "putStreamRequest": {
+      "required": [
+        "vector"
+      ],
+      "properties": {
+        "vector": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/putStreamFeature"
+          }
+        },
+        "submitRule": {
+          "type": "string",
+          "enum": [
+            "default",
+            "submit",
+            "nosubmit"
+          ],
+          "description": "Policy for submitting sensor fusion vector on this request, overriding per-feature submit rules in fusion configuration. One of \"default\", \"submit\", \"nosubmit\" (defaults to \"default\"). Under \"default\" policy, the per-feature settings of \"submit\" or \"nosubmit\" are used to determine whether this update to the fusion vector triggers an inference."
+        }
+      }
+    },
+    "putStreamFeature": {
+      "required": [
+        "label",
+        "value"
+      ],
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "label associated with feature"
+        },
+        "value": {
+          "type": "number",
+          "format": "float",
+          "description": "new value for this feature in sensor fusion vector"
+        },
+        "ts": {
+          "type": "string",
+          "description": "ISO-format timestamp for this data value"
+        }
+      }
+    },
+    "getSensorResponse": {
+      "required": [
+        "label",
+        "sensorId",
+        "usageInfo"
+      ],
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Additional label to be assigned for sensor"
+        },
+        "sensorId": {
+          "type": "string",
+          "description": "Unique identifier for sensor"
+        },
+        "usageInfo": {
+          "$ref": "#/definitions/sensorUsageInfo",
+          "description": "Sensor usage info"
+        }
+      }
+    },
+    "sensorUsageInfo": {
+      "required": [
+        "postConfig",
+        "postOutage",
+        "postStream",
+        "putSensor",
+        "getSensor",
+        "getConfig",
+        "getStatus",
+        "getRootCause",
+        "getAmberSummary",
+        "postPretrain",
+        "getPretrain"
+      ],
+      "properties": {
+        "postConfig": {
+          "$ref": "#/definitions/endpointUsageInfo",
+          "description": "postConfig endpoint usage info"
+        },
+        "postOutage": {
+          "$ref": "#/definitions/endpointUsageInfo",
+          "description": "postOutage endpoint usage info"
+        },
+        "postStream": {
+          "$ref": "#/definitions/streamingEndpointUsageInfo",
+          "description": "postStream endpoint usage info"
+        },
+        "putSensor": {
+          "$ref": "#/definitions/endpointUsageInfo",
+          "description": "putSensor endpoint usage info"
+        },
+        "getSensor": {
+          "$ref": "#/definitions/endpointUsageInfo",
+          "description": "getSensor endpoint usage info"
+        },
+        "getConfig": {
+          "$ref": "#/definitions/endpointUsageInfo",
+          "description": "getConfig endpoint usage info"
+        },
+        "getStatus": {
+          "$ref": "#/definitions/endpointUsageInfo",
+          "description": "getStatus endpoint usage info"
+        },
+        "getRootCause": {
+          "$ref": "#/definitions/endpointUsageInfo",
+          "description": "getRootCause endpoint usage info"
+        },
+        "getAmberSummary": {
+          "$ref": "#/definitions/endpointUsageInfo",
+          "description": "getAmberSummary endpoint usage info"
+        },
+        "postPretrain": {
+          "$ref": "#/definitions/endpointUsageInfo",
+          "description": "postPretrain endpoint usage info"
+        },
+        "getPretrain": {
+          "$ref": "#/definitions/endpointUsageInfo",
+          "description": "getPretrain endpoint usage info"
+        }
+      }
+    },
+    "endpointUsageInfo": {
+      "required": [
+        "callsTotal",
+        "callsThisPeriod",
+        "lastCalled"
+      ],
+      "properties": {
+        "callsTotal": {
+          "type": "number",
+          "format": "uint64",
+          "description": "total number of calls to this endpoint"
+        },
+        "callsThisPeriod": {
+          "type": "number",
+          "format": "uint64",
+          "description": "number of calls to this endpoint during the current billing period"
+        },
+        "lastCalled": {
+          "type": "string",
+          "description": "ISO formatted time of last call to this endpoint"
+        }
+      }
+    },
+    "streamingEndpointUsageInfo": {
+      "required": [
+        "callsTotal",
+        "callsThisPeriod",
+        "samplesTotal",
+        "samplesThisPeriod",
+        "lastCalled"
+      ],
+      "properties": {
+        "callsTotal": {
+          "type": "number",
+          "format": "uint64",
+          "description": "total number of calls to this endpoint"
+        },
+        "callsThisPeriod": {
+          "type": "number",
+          "format": "uint64",
+          "description": "number of calls to this endpoint during the current billing period"
+        },
+        "samplesTotal": {
+          "type": "number",
+          "format": "uint64",
+          "description": "total number of samples processed"
+        },
+        "samplesThisPeriod": {
+          "type": "number",
+          "format": "uint64",
+          "description": "number of samples processed during the current billing period"
+        },
+        "lastCalled": {
+          "type": "string",
+          "description": "ISO formatted time of last call to this endpoint"
+        }
+      }
+    },
+    "PCA": {
+      "type": "array",
+      "description": "array of pca values",
+      "items": {
+        "type": "array",
+        "items": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "uint16Array": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "format": "uint16"
+      }
+    },
+    "uint32Array": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "format": "uint32"
+      }
+    },
+    "int32Array": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "format": "int32"
+      }
+    },
+    "postAuth2Response": {
+      "required": [
+        "expiresIn",
+        "idToken",
+        "refreshToken",
+        "tokenType"
+      ],
+      "properties": {
+        "idToken": {
+          "type": "string",
+          "description": "Identifier token to be used as Bearer token"
+        },
+        "refreshToken": {
+          "type": "string",
+          "description": "Refresh token identifier"
+        },
+        "expiresIn": {
+          "type": "string",
+          "description": "Amount of time before token expires"
+        },
+        "tokenType": {
+          "type": "string",
+          "description": "Type of authentication token"
+        }
+      }
+    },
+    "postStreamResponse": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/streamStatus"
+        },
+        {
+          "required": [
+            "AD",
+            "AH",
+            "AM",
+            "AW",
+            "ID",
+            "SI",
+            "RI"
+          ],
+          "properties": {
+            "RI": {
+              "$ref": "#/definitions/uint16Array"
+            },
+            "SI": {
+              "$ref": "#/definitions/uint16Array"
+            },
+            "AD": {
+              "$ref": "#/definitions/uint16Array"
+            },
+            "AH": {
+              "$ref": "#/definitions/uint16Array"
+            },
+            "AM": {
+              "$ref": "#/definitions/float32Array"
+            },
+            "AW": {
+              "$ref": "#/definitions/uint16Array"
+            },
+            "ID": {
+              "$ref": "#/definitions/int32Array"
+            }
+          }
+        }
+      ]
+    },
+    "putStreamResponse": {
+      "required": [
+        "vector"
+      ],
+      "properties": {
+        "vector": {
+          "type": "string",
+          "description": "updated sensor fusion vector as a string of comma-separated values"
+        },
+        "results": {
+          "$ref": "#/definitions/postStreamResponse",
+          "description": "streaming results when available"
+        }
+      }
+    },
+    "postConfigResponse": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/streamingParameters"
+        },
+        {
+          "required": [
+            "featureCount",
+            "streamingWindowSize",
+            "percentVariation",
+            "samplesToBuffer"
+          ],
+          "properties": {
+            "featureCount": {
+              "type": "integer",
+              "format": "uint16",
+              "description": "number of features per sample"
+            },
+            "streamingWindowSize": {
+              "type": "integer",
+              "format": "uint16",
+              "description": "streaming window size",
+              "maximum": 500
+            },
+            "features": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/featureConfig"
+              }
+            },
+            "samplesToBuffer": {
+              "type": "number",
+              "format": "uint32",
+              "description": "the number of samples to be applied before autotuning begins",
+              "default": 10000
+            },
+            "percentVariationOverride": {
+              "type": "number",
+              "format": "float",
+              "description": "override autotuned percent variation with this value"
+            }
+          }
+        }
+      ]
+    },
+    "featureConfig": {
+      "properties": {
+        "maxVal": {
+          "x-omitempty": "false",
+          "type": "number",
+          "format": "float",
+          "description": "corresponding maximum value"
+        },
+        "minVal": {
+          "x-omitempty": "false",
+          "type": "number",
+          "format": "float",
+          "description": "the value that should be considered the minimum value for this feature. This can be set to a value larger than the actual min if you want to treat all value less than that as the same (for instance, to keep a noise spike from having undue influence in the clustering"
+        },
+        "weight": {
+          "type": "integer",
+          "format": "uint16",
+          "description": "corresponding weight"
+        },
+        "label": {
+          "type": "string",
+          "description": "label associated with feature"
+        },
+        "submitRule": {
+          "type": "string",
+          "enum": [
+            "submit",
+            "nosubmit"
+          ],
+          "description": "policy for submitting sensor fusion vector when this feature is updated. One of \"submit\", \"nosubmit\" (defaults to \"submit\")"
+        }
+      }
+    },
+    "fusionConfig": {
+      "required": [
+        "label"
+      ],
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "label associated with feature"
+        },
+        "submitRule": {
+          "type": "string",
+          "enum": [
+            "submit",
+            "nosubmit"
+          ],
+          "description": "policy for submitting sensor fusion vector when this feature is updated. One of \"submit\", \"nosubmit\" (defaults to \"submit\")"
+        }
+      }
+    },
+    "postSensorRequest": {
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Additional label to be assigned for sensor"
+        }
+      }
+    },
+    "streamStatus": {
+      "required": [
+        "clusterCount",
+        "message",
+        "progress",
+        "retryCount",
+        "state",
+        "streamingWindowSize",
+        "totalInferences",
+        "lastModified",
+        "lastModifiedDelta"
+      ],
+      "properties": {
+        "state": {
+          "type": "string",
+          "description": "state of the sensor, states will be prefixed with a state variable  followed by a colon followed by a message indicating progress.  Possible state variables  are: Not streaming, Buffering, Autotuning, Learning, Learning Complete, Monitoring,  Streaming error,  Autotuning error, Autotuning retry"
+        },
+        "message": {
+          "type": "string",
+          "description": "message to accompany the current state"
+        },
+        "progress": {
+          "type": "number",
+          "format": "uint16",
+          "description": "completion percentage (applies to Buffering and Autotuning states)"
+        },
+        "clusterCount": {
+          "type": "number",
+          "format": "uint32",
+          "description": "current cluster count (applies to Learning and Monitoring states)"
+        },
+        "retryCount": {
+          "type": "number",
+          "format": "uint16",
+          "description": "number of restarts that have happened during autotuning"
+        },
+        "streamingWindowSize": {
+          "type": "number",
+          "format": "uint16",
+          "description": "the current streaming window size that is being used"
+        },
+        "totalInferences": {
+          "type": "number",
+          "format": "uint64",
+          "description": "inferences since the most recent restart"
+        },
+        "lastModified": {
+          "type": "number",
+          "format": "uint64",
+          "description": "Unix time stamp of the last posted stream data"
+        },
+        "lastModifiedDelta": {
+          "type": "number",
+          "format": "uint64",
+          "description": "number of seconds since the last posted stream data"
+        }
+      }
+    },
+    "getSensorsResponse": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/sensorInstance"
+      }
+    },
+    "getSummaryResponse": {
+      "required": [
+        "m_Nano",
+        "m_Autotune",
+        "m_AutotuningElbowClusterCounts",
+        "m_AutotuningElbowPVArray",
+        "m_StreamingParameters",
+        "m_AmberStatus",
+        "m_AnomalyThreshold",
+        "m_AmberWarningCriticalValue",
+        "m_AmberAlertCriticalValue",
+        "m_Training",
+        "m_RecentSamples",
+        "m_RecentRawSamples",
+        "m_RecentTimes",
+        "m_RecentSIs",
+        "m_RecentRIs",
+        "m_RecentADs",
+        "m_RecentAHs",
+        "m_RecentAWs"
+      ],
+      "properties": {
+        "MagicNumber": {
+          "$ref": "#/definitions/MagicNumber"
+        },
+        "VersionNumber": {
+          "$ref": "#/definitions/VersionNumber"
+        },
+        "m_Nano": {
+          "$ref": "#/definitions/m_Nano"
+        },
+        "m_BufferStats": {
+          "$ref": "#/definitions/m_BufferStats"
+        },
+        "m_Autotune": {
+          "$ref": "#/definitions/m_Autotune"
+        },
+        "m_AutotuningElbowClusterCounts": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint16"
+          }
+        },
+        "m_AutotuningElbowPVArray": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "m_StreamingParameters": {
+          "$ref": "#/definitions/m_StreamingParameters"
+        },
+        "m_AmberStatus": {
+          "$ref": "#/definitions/m_AmberStatus"
+        },
+        "m_Training": {
+          "$ref": "#/definitions/m_Training"
+        },
+        "m_AnomalyThreshold": {
+          "type": "integer",
+          "format": "uint16"
+        },
+        "m_AmberWarningCriticalValue": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "m_AmberAlertCriticalValue": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "m_ErrorStringBuffer": {
+          "type": "string"
+        },
+        "m_ClusteringParametersInitialized": {
+          "type": "boolean"
+        },
+        "m_StreamingMode": {
+          "type": "boolean"
+        },
+        "m_StreamingModeStatus": {
+          "type": "integer",
+          "format": "uint16"
+        },
+        "m_ModifiedAt": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "m_AnomalyMetricByAnomalyCount": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "m_RecentAnomalyCount": {
+          "type": "integer",
+          "format": "uint16"
+        },
+        "m_ResultsIDArray": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        },
+        "m_TrainingSamples": {
+          "$ref": "#/definitions/m_RecentSamples"
+        },
+        "m_RecentSamples": {
+          "$ref": "#/definitions/m_RecentSamples"
+        },
+        "m_RecentRawSamples": {
+          "$ref": "#/definitions/m_RecentSamples"
+        },
+        "m_RecentTimes": {
+          "$ref": "#/definitions/m_RecentTimes"
+        },
+        "m_RecentSIs": {
+          "$ref": "#/definitions/m_RecentAnalytics"
+        },
+        "m_RecentRIs": {
+          "$ref": "#/definitions/m_RecentAnalytics"
+        },
+        "m_RecentADs": {
+          "$ref": "#/definitions/m_RecentAnalytics"
+        },
+        "m_RecentAHs": {
+          "$ref": "#/definitions/m_RecentAnalytics"
+        },
+        "m_RecentIDs": {
+          "$ref": "#/definitions/m_RecentIDs"
+        },
+        "m_RecentAMs": {
+          "$ref": "#/definitions/m_RecentAMs"
+        },
+        "m_RecentAWs": {
+          "$ref": "#/definitions/m_RecentAnalytics"
+        }
+      }
+    },
+    "MagicNumber": {
+      "type": "integer",
+      "format": "uint16"
+    },
+    "VersionNumber": {
+      "type": "integer",
+      "format": "uint16"
+    },
+    "m_Nano": {
+      "required": [
+        "m_NanoConfig"
+      ],
+      "properties": {
+        "m_NanoConfig": {
+          "$ref": "#/definitions/m_NanoConfig"
+        },
+        "MagicNumber": {
+          "$ref": "#/definitions/MagicNumber"
+        },
+        "VersionNumber": {
+          "$ref": "#/definitions/VersionNumber"
+        },
+        "BackendVersion": {
+          "type": "integer",
+          "format": "uint16"
+        },
+        "m_ErrorMsg": {
+          "type": "string"
+        },
+        "m_NanoBackend": {
+          "$ref": "#/definitions/m_NanoBackend"
+        }
+      }
+    },
+    "m_NanoBackend": {
+      "properties": {
+        "VersionNumber": {
+          "$ref": "#/definitions/VersionNumber"
+        },
+        "m_PatternMemory": {
+          "$ref": "#/definitions/m_PatternMemory"
+        },
+        "m_InitComplete": {
+          "type": "boolean"
+        },
+        "m_PatternLength": {
+          "type": "integer",
+          "format": "uint16"
+        },
+        "m_LearningIsOn": {
+          "type": "boolean"
+        },
+        "m_NumOfPatternsClustered": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "m_PatternMemory": {
+      "properties": {
+        "VersionNumber": {
+          "$ref": "#/definitions/VersionNumber"
+        }
+      }
+    },
+    "m_NanoConfig": {
+      "required": [
+        "m_PercentVariation",
+        "NumOfFeatures",
+        "Features"
+      ],
+      "properties": {
+        "VersionNumber": {
+          "$ref": "#/definitions/VersionNumber"
+        },
+        "m_NumericFormat": {
+          "type": "integer",
+          "format": "uint16"
+        },
+        "m_Accuracy": {
+          "type": "number",
+          "format": "float"
+        },
+        "m_PercentVariation": {
+          "type": "number",
+          "format": "float",
+          "description": "the percent variation (for instance, 0.025 gives 2.5% variation) used for clustering"
+        },
+        "NumOfFeatures": {
+          "type": "integer",
+          "format": "uint16"
+        },
+        "Features": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/featureConfig"
+          }
+        }
+      }
+    },
+    "m_BufferStats": {
+      "properties": {
+        "VersionNumber": {
+          "$ref": "#/definitions/VersionNumber"
+        },
+        "TotalBytesWritten": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "TotalBytesProcessed": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "LoadBufferLength": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "LoadBufferCapacity": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "m_Autotune": {
+      "required": [
+        "m_AP"
+      ],
+      "properties": {
+        "VersionNumber": {
+          "$ref": "#/definitions/VersionNumber"
+        },
+        "m_AutotuningInProgress": {
+          "type": "boolean"
+        },
+        "m_PercentComplete": {
+          "type": "number",
+          "format": "float64"
+        },
+        "m_AutotuningSucceeded": {
+          "type": "boolean"
+        },
+        "m_NumPatternsToAutotune": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "m_ErrorStringBuffer": {
+          "type": "string"
+        },
+        "m_FeaturesToTuneArray": {
+          "type": "array",
+          "items": {
+            "type": "boolean"
+          }
+        },
+        "m_NCP": {
+          "$ref": "#/definitions/m_NCP"
+        },
+        "m_AP": {
+          "$ref": "#/definitions/m_AP"
+        }
+      }
+    },
+    "m_AP": {
+      "required": [
+        "m_AutotunePV",
+        "m_AutotuneRange",
+        "m_AutotuneByFeatures"
+      ],
+      "properties": {
+        "VersionNumber": {
+          "$ref": "#/definitions/VersionNumber"
+        },
+        "m_AutotuneRange": {
+          "type": "boolean"
+        },
+        "m_AutotunePV": {
+          "type": "boolean"
+        },
+        "m_AutotuneByFeatures": {
+          "type": "boolean"
+        },
+        "m_MaxClusters": {
+          "type": "integer",
+          "format": "uint16"
+        },
+        "m_FeaturesToTuneArray": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint16"
+          }
+        }
+      }
+    },
+    "m_NCP": {
+      "properties": {
+        "VersionNumber": {
+          "$ref": "#/definitions/VersionNumber"
+        },
+        "NumOfFeatures": {
+          "type": "integer",
+          "format": "uint16"
+        },
+        "m_NumericFormat": {
+          "type": "integer",
+          "format": "uint16"
+        },
+        "m_PercentVariation": {
+          "type": "number",
+          "format": "float"
+        },
+        "m_Accuracy": {
+          "type": "number",
+          "format": "float"
+        },
+        "m_StreamingWindowSize": {
+          "type": "integer",
+          "format": "uint16"
+        }
+      }
+    },
+    "m_StreamingParameters": {
+      "required": [
+        "m_SamplesToBufferForAutotuning",
+        "m_GraduationAtRateNumerator",
+        "m_GraduationAtRateDenominator",
+        "m_GraduateAtMaxClusters",
+        "m_GraduateAtMaxSamples"
+      ],
+      "properties": {
+        "VersionNumber": {
+          "$ref": "#/definitions/VersionNumber"
+        },
+        "m_EnableAutotuning": {
+          "type": "boolean"
+        },
+        "m_SamplesToBufferForAutotuning": {
+          "type": "integer",
+          "format": "uint32"
+        },
+        "m_GraduationAtRateNumerator": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "m_GraduationAtRateDenominator": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "m_GraduateAtMaxClusters": {
+          "type": "integer",
+          "format": "uint16"
+        },
+        "m_GraduateAtMaxSamples": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "m_AmberStatus": {
+      "required": [
+        "m_Status",
+        "m_StreamingWindowSize",
+        "m_RetryCount",
+        "m_CurrentClusterCount",
+        "m_TotalInferences"
+      ],
+      "properties": {
+        "VersionNumber": {
+          "$ref": "#/definitions/VersionNumber"
+        },
+        "m_Status": {
+          "type": "string"
+        },
+        "m_Message": {
+          "type": "string"
+        },
+        "m_Progress": {
+          "type": "integer",
+          "format": "uint16"
+        },
+        "m_CurrentClusterCount": {
+          "type": "integer",
+          "format": "uint32"
+        },
+        "m_RetryCount": {
+          "type": "integer",
+          "format": "uint16"
+        },
+        "m_StreamingWindowSize": {
+          "type": "integer",
+          "format": "uint16"
+        },
+        "m_TotalInferences": {
+          "type": "integer",
+          "format": "uint64"
+        },
+        "m_TotalSamplesWritten": {
+          "type": "integer",
+          "format": "uint64"
+        }
+      }
+    },
+    "m_Training": {
+      "required": [
+        "m_GeometricPlotX",
+        "m_GeometricPlotY",
+        "m_ClusterGrowth"
+      ],
+      "properties": {
+        "VersionNumber": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/VersionNumber"
+          }
+        },
+        "m_GeometricPlotY": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "m_GeometricPlotX": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        },
+        "m_ClusterGrowth": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint64"
+          }
+        },
+        "m_AnomalyIndexes": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      }
+    },
+    "m_RecentFloats": {
+      "required": [
+        "m_Values"
+      ],
+      "properties": {
+        "VersionNumber": {
+          "$ref": "#/definitions/VersionNumber"
+        },
+        "m_Values": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          }
+        }
+      }
+    },
+    "m_RecentSamples": {
+      "required": [
+        "m_Values"
+      ],
+      "properties": {
+        "VersionNumber": {
+          "$ref": "#/definitions/VersionNumber"
+        },
+        "m_Values": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "float"
+            }
+          }
+        }
+      }
+    },
+    "m_RecentTimes": {
+      "required": [
+        "m_Values"
+      ],
+      "properties": {
+        "VersionNumber": {
+          "$ref": "#/definitions/VersionNumber"
+        },
+        "m_Values": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint64"
+          }
+        }
+      }
+    },
+    "m_RecentAnalytics": {
+      "required": [
+        "m_Values"
+      ],
+      "properties": {
+        "VersionNumber": {
+          "$ref": "#/definitions/VersionNumber"
+        },
+        "m_Values": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint16"
+          }
+        }
+      }
+    },
+    "m_RecentIDs": {
+      "required": [
+        "m_Values"
+      ],
+      "properties": {
+        "VersionNumber": {
+          "$ref": "#/definitions/VersionNumber"
+        },
+        "m_Values": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      }
+    },
+    "m_RecentAMs": {
+      "required": [
+        "m_Values"
+      ],
+      "properties": {
+        "VersionNumber": {
+          "$ref": "#/definitions/VersionNumber"
+        },
+        "m_Values": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          }
+        }
+      }
+    }
+  }
+}
