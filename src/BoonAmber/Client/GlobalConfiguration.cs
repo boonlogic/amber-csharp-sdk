@@ -28,6 +28,12 @@ namespace BoonAmber.Client
     /// </remarks>
     public partial class GlobalConfiguration : Configuration
     {
-
+        public GlobalConfiguration()
+        {
+            CreateApiClient();
+            Timeout = 30000;
+            ApiClient.RestClient.Timeout = TimeSpan.FromMilliseconds(30000);
+            DefaultHeader.Add("Content-Type", "application/json");
+        }
     }
 }
