@@ -1118,7 +1118,7 @@
     "/stream": {
       "post": {
         "summary": "Stream data to a sensor",
-        "description": "Sends data to a sensor. Ingoing data should be formatted as a simple string of comma-separated numbers with no spaces.\n\nThe following analytic results are returned:\n- state : sensor state as of this call (one of: \"Buffering\", \"Autotuning\", \"Learning\", \"Monitoring\", \"Error\")\n- ID : array of cluster IDs. These correspond one-to-one with input samples, indicating the cluster to which each input pattern was assigned.\n- SI : array of smoothed anomaly index values. These values correspond one-to-one with the input samples and range between 0 and 1000. Values closer to 0 represent input patterns which are ordinary given the data seen so far on this sensor. Values closer to 1000 represent novel patterns which are anomalous with respect to data seen before.\n- AD : array of 0's and 1's as anomaly detection indicators. These correspond one-to-one with input samples and are produced by thresholding the smoothed anomaly index (SI). The threshold is determined automatically from the SI values. A value of 0 indicates that the SI has not exceeded the anomaly detection threshold. A value of 1 indicates it has, signaling an anomaly at the corresponding input sample.\n- AH : array of anomaly history values. These values are a moving-window sum of the AD, giving the number of anomaly detections (1's) present in the AD signal over a \"recent history\" window whose length is the buffer size.\n- AM : array of Amber Metric values. These are floating-point values between 0.0 and 1.0 indicating the extent to which the AH contains an unusually high number of anomalies in recent history. The values are derived statistically from a Poisson model, with values close to 0.0 signaling a lower, and values close to 1.0 signaling a higher, frequency of anomalies than usual.\n- AW : array of Amber Warning Level values. This index is produced by thresholding the Amber Metric (AM) and takes on the values 0, 1 or 2 representing a discrete \"warning level\" for an asset based on the frequency of anomalies within recent history. 0 = normal, 1 = asset changing, 2 = asset critical. The default thresholds for the two warning levels are the standard statistical values of 0.95 (outlier, asset changing) and 0.997 (extreme outlier, asset critical).",
+        "description": "Sends data to a sensor. Ingoing data should be formatted as a simple string of comma-separated numbers with no spaces.\n\nThe following analytic results are returned:\n- state : sensor state as of this call (one of: \"Buffering\", \"Autotuning\", \"Learning\", \"Monitoring\", \"Error\")\n- ID : array of cluster IDs. These correspond one-to-one with input samples, indicating the cluster to which each input pattern was assigned.\n- SI : array of smoothed anomaly index values. These values correspond one-to-one with the input samples and range between 0 and 1000. Values closer to 0 represent input patterns which are ordinary given the data seen so far on this sensor. Values closer to 1000 represent novel patterns which are anomalous with respect to data seen before.\n- AD : array of 0's and 1's as anomaly detection indicators. These correspond one-to-one with input samples and are produced by thresholding the smoothed anomaly index (SI). The threshold is determined automatically from the SI values. A value of 0 indicates that the SI has not exceeded the anomaly detection threshold. A value of 1 indicates it has, signaling an anomaly at the corresponding input sample.\n- AH : array of anomaly history values. These values are a moving-window sum of the AD, giving the number of anomaly detections (1's) present in the AD signal over a \"recent history\" window whose length is the buffer size.\n- AM : array of Amber Metric values. These are floating-point values between 0.0 and 1.0 indicating the extent to which the AH contains an unusually high number of anomalies in recent history. The values are derived statistically from a Poisson model, with values close to 0.0 signaling a lower, and values close to 1.0 signaling a higher, frequency of anomalies than usual.\n- AW : array of Amber Warning Level values. This index is produced by thresholding the Amber Metric (AM) and takes on the values 0, 1 or 2 representing a discrete \"warning level\" for an asset based on the frequency of anomalies within recent history. 0 = normal, 1 = asset changing, 2 = asset critical. The default thresholds for the two warning levels are the standard statistical values of 0.95 (outlier, asset chaing) and 0.997 (extreme outlier, asset critical).",
         "operationId": "postStream",
         "consumes": [
           "application/json"
@@ -2568,9 +2568,7 @@
         "retryCount",
         "state",
         "streamingWindowSize",
-        "totalInferences",
-        "lastModified",
-        "lastModifiedDelta"
+        "totalInferences"
       ],
       "properties": {
         "state": {
@@ -2605,16 +2603,6 @@
           "type": "number",
           "format": "uint64",
           "description": "inferences since the most recent restart"
-        },
-        "lastModified": {
-          "type": "number",
-          "format": "uint64",
-          "description": "Unix time stamp of the last posted stream data"
-        },
-        "lastModifiedDelta": {
-          "type": "number",
-          "format": "uint64",
-          "description": "number of seconds since the last posted stream data"
         }
       }
     },
