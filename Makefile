@@ -23,7 +23,7 @@ test: build
 	dotnet test src/BoonAmber.Test/BoonAmber.Test.csproj
 
 run: build
-	dotnet run src/examples/examples.csproj
+	dotnet run --project src/examples/examples.csproj
 
 generate:
 	mv README.md README.copy && \

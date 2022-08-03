@@ -824,6 +824,15 @@ namespace BoonAmber.Api
     {
         private BoonAmber.Client.ExceptionFactory _exceptionFactory = (name, response) => null;
 
+        public void InitializeApi() {
+            this.Configuration.Timeout = 30000;
+            this.Configuration.ApiClient.RestClient.Timeout = TimeSpan.FromMilliseconds(30000);
+            this.Configuration.DefaultHeader.Add("Content-Type", "application/json");
+            this.Configuration.CreateApiClient();
+
+            System.Net.ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultApi"/> class.
         /// </summary>
@@ -831,6 +840,8 @@ namespace BoonAmber.Api
         public DefaultApi(String basePath)
         {
             this.Configuration = new BoonAmber.Client.Configuration { BasePath = basePath };
+
+            InitializeApi();
 
             ExceptionFactory = BoonAmber.Client.Configuration.DefaultExceptionFactory;
         }
@@ -842,6 +853,8 @@ namespace BoonAmber.Api
         public DefaultApi()
         {
             this.Configuration = BoonAmber.Client.Configuration.Default;
+
+            InitializeApi();
 
             ExceptionFactory = BoonAmber.Client.Configuration.DefaultExceptionFactory;
         }
@@ -858,6 +871,8 @@ namespace BoonAmber.Api
                 this.Configuration = BoonAmber.Client.Configuration.Default;
             else
                 this.Configuration = configuration;
+
+            InitializeApi();
 
             ExceptionFactory = BoonAmber.Client.Configuration.DefaultExceptionFactory;
         }
