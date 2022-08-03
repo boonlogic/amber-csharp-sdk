@@ -1,4 +1,5 @@
 # BoonAmber.Model.GetSensorResponse
+
 ## Properties
 
 Name | Type | Description | Notes

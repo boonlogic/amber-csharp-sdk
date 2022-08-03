@@ -1,4 +1,5 @@
 # BoonAmber.Model.FusionConfig
+
 ## Properties
 
 Name | Type | Description | Notes

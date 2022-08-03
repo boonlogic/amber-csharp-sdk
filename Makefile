@@ -27,6 +27,6 @@ run: build
 
 generate:
 	mv README.md README.copy && \
-	bin/swagger-codegen generate -i amber-api.json -l csharp -c swagger-config.json && \
-	rm -rf git_push.sh && \
+	codegen/openapi-codegen generate -i amber-api.json -g csharp-netcore --generate-alias-as-model -c swagger-config.json && \
+	rm -rf git_push.sh appveyor.yml && \
 	mv README.copy README.md

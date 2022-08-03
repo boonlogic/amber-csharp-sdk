@@ -1,4 +1,5 @@
 # BoonAmber.Model.PostSensorRequest
+
 ## Properties
 
 Name | Type | Description | Notes

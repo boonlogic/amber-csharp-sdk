@@ -1,4 +1,5 @@
 # BoonAmber.Model.PutConfigRequest
+
 ## Properties
 
 Name | Type | Description | Notes

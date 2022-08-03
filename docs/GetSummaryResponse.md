@@ -1,29 +1,30 @@
 # BoonAmber.Model.GetSummaryResponse
+
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**MagicNumber** | **int?** |  | [optional] 
-**VersionNumber** | **int?** |  | [optional] 
+**MagicNumber** | **int** |  | [optional] 
+**VersionNumber** | **int** |  | [optional] 
 **MNano** | [**MNano**](MNano.md) |  | 
 **MBufferStats** | [**MBufferStats**](MBufferStats.md) |  | [optional] 
 **MAutotune** | [**MAutotune**](MAutotune.md) |  | 
-**MAutotuningElbowClusterCounts** | **List&lt;int?&gt;** |  | 
-**MAutotuningElbowPVArray** | **List&lt;float?&gt;** |  | 
+**MAutotuningElbowClusterCounts** | **List&lt;int&gt;** |  | 
+**MAutotuningElbowPVArray** | **List&lt;float&gt;** |  | 
 **MStreamingParameters** | [**MStreamingParameters**](MStreamingParameters.md) |  | 
 **MAmberStatus** | [**MAmberStatus**](MAmberStatus.md) |  | 
 **MTraining** | [**MTraining**](MTraining.md) |  | 
-**MAnomalyThreshold** | **int?** |  | 
-**MAmberWarningCriticalValue** | **int?** |  | 
-**MAmberAlertCriticalValue** | **int?** |  | 
+**MAnomalyThreshold** | **int** |  | 
+**MAmberWarningCriticalValue** | **int** |  | 
+**MAmberAlertCriticalValue** | **int** |  | 
 **MErrorStringBuffer** | **string** |  | [optional] 
-**MClusteringParametersInitialized** | **bool?** |  | [optional] 
-**MStreamingMode** | **bool?** |  | [optional] 
-**MStreamingModeStatus** | **int?** |  | [optional] 
-**MModifiedAt** | **int?** |  | [optional] 
-**MAnomalyMetricByAnomalyCount** | **List&lt;float?&gt;** |  | [optional] 
-**MRecentAnomalyCount** | **int?** |  | [optional] 
-**MResultsIDArray** | **List&lt;int?&gt;** |  | [optional] 
+**MClusteringParametersInitialized** | **bool** |  | [optional] 
+**MStreamingMode** | **bool** |  | [optional] 
+**MStreamingModeStatus** | **int** |  | [optional] 
+**MModifiedAt** | **int** |  | [optional] 
+**MAnomalyMetricByAnomalyCount** | **List&lt;float&gt;** |  | [optional] 
+**MRecentAnomalyCount** | **int** |  | [optional] 
+**MResultsIDArray** | **List&lt;int&gt;** |  | [optional] 
 **MTrainingSamples** | [**MRecentSamples**](MRecentSamples.md) |  | [optional] 
 **MRecentSamples** | [**MRecentSamples**](MRecentSamples.md) |  | 
 **MRecentRawSamples** | [**MRecentSamples**](MRecentSamples.md) |  | 

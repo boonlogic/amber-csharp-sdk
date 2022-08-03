@@ -1,4 +1,5 @@
 # BoonAmber.Model.PostAuth2Request
+
 ## Properties
 
 Name | Type | Description | Notes

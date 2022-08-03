@@ -1,4 +1,5 @@
 # BoonAmber.Model.GetRootCauseResponse
+
 ## Properties
 
 Name | Type | Description | Notes

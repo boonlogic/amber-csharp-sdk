@@ -1,4 +1,5 @@
 # BoonAmber.Model.GetPretrainResponse
+
 ## Properties
 
 Name | Type | Description | Notes

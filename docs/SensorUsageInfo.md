@@ -1,4 +1,5 @@
 # BoonAmber.Model.SensorUsageInfo
+
 ## Properties
 
 Name | Type | Description | Notes

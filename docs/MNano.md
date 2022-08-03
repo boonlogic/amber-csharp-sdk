@@ -1,12 +1,13 @@
 # BoonAmber.Model.MNano
+
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **MNanoConfig** | [**MNanoConfig**](MNanoConfig.md) |  | 
-**MagicNumber** | **int?** |  | [optional] 
-**VersionNumber** | **int?** |  | [optional] 
-**BackendVersion** | **int?** |  | [optional] 
+**MagicNumber** | **int** |  | [optional] 
+**VersionNumber** | **int** |  | [optional] 
+**BackendVersion** | **int** |  | [optional] 
 **MErrorMsg** | **string** |  | [optional] 
 **MNanoBackend** | [**MNanoBackend**](MNanoBackend.md) |  | [optional] 
 

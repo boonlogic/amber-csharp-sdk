@@ -1855,12 +1855,12 @@
           "$ref": "#/definitions/uint16Array"
         },
         "totalInferences": {
-          "type": "number",
+          "type": "integer",
           "format": "uint64",
           "description": "inferences since the most recent restart"
         },
         "numClusters": {
-          "type": "number",
+          "type": "integer",
           "format": "uint64"
         },
         "anomalyThreshold": {
@@ -1910,7 +1910,7 @@
               "description": "the percent variation (for instance, 0.025 gives 2.5% variation) used for clustering"
             },
             "samplesToBuffer": {
-              "type": "number",
+              "type": "integer",
               "format": "uint32",
               "description": "the number of samples to be applied before autotuning begins",
               "default": 10000
@@ -1964,31 +1964,31 @@
     "streamingParameters": {
       "properties": {
         "anomalyHistoryWindow": {
-          "type": "number",
+          "type": "integer",
           "format": "uint32",
           "description": "the number of samples to use when calculating AH",
           "default": 10000
         },
         "learningRateNumerator": {
-          "type": "number",
+          "type": "integer",
           "format": "uint64",
           "description": "enables graduation requirements for learning",
           "default": 10
         },
         "learningRateDenominator": {
-          "type": "number",
+          "type": "integer",
           "format": "uint64",
           "description": "enables graduation requirements for learning",
           "default": 10000
         },
         "learningMaxClusters": {
-          "type": "number",
+          "type": "integer",
           "format": "uint16",
           "description": "learning graduation requirement for stopping learning upon reaching this cluster count",
           "default": 1000
         },
         "learningMaxSamples": {
-          "type": "number",
+          "type": "integer",
           "format": "uint64",
           "description": "learning graduation requirement for stopping learning after acquiring this many samples",
           "default": 1000000
@@ -2025,7 +2025,7 @@
               }
             },
             "samplesToBuffer": {
-              "type": "number",
+              "type": "integer",
               "format": "uint32",
               "description": "the number of samples to be applied before autotuning begins",
               "default": 10000
@@ -2132,7 +2132,7 @@
     "uint64Array": {
       "type": "array",
       "items": {
-        "type": "number",
+        "type": "integer",
         "format": "uint64"
       }
     },
@@ -2291,12 +2291,12 @@
       ],
       "properties": {
         "callsTotal": {
-          "type": "number",
+          "type": "integer",
           "format": "uint64",
           "description": "total number of calls to this endpoint"
         },
         "callsThisPeriod": {
-          "type": "number",
+          "type": "integer",
           "format": "uint64",
           "description": "number of calls to this endpoint during the current billing period"
         },
@@ -2316,22 +2316,22 @@
       ],
       "properties": {
         "callsTotal": {
-          "type": "number",
+          "type": "integer",
           "format": "uint64",
           "description": "total number of calls to this endpoint"
         },
         "callsThisPeriod": {
-          "type": "number",
+          "type": "integer",
           "format": "uint64",
           "description": "number of calls to this endpoint during the current billing period"
         },
         "samplesTotal": {
-          "type": "number",
+          "type": "integer",
           "format": "uint64",
           "description": "total number of samples processed"
         },
         "samplesThisPeriod": {
-          "type": "number",
+          "type": "integer",
           "format": "uint64",
           "description": "number of samples processed during the current billing period"
         },
@@ -2355,21 +2355,21 @@
     "uint16Array": {
       "type": "array",
       "items": {
-        "type": "number",
+        "type": "integer",
         "format": "uint16"
       }
     },
     "uint32Array": {
       "type": "array",
       "items": {
-        "type": "number",
+        "type": "integer",
         "format": "uint32"
       }
     },
     "int32Array": {
       "type": "array",
       "items": {
-        "type": "number",
+        "type": "integer",
         "format": "int32"
       }
     },
@@ -2486,7 +2486,7 @@
               }
             },
             "samplesToBuffer": {
-              "type": "number",
+              "type": "integer",
               "format": "uint32",
               "description": "the number of samples to be applied before autotuning begins",
               "default": 10000
@@ -2580,27 +2580,27 @@
           "description": "message to accompany the current state"
         },
         "progress": {
-          "type": "number",
+          "type": "integer",
           "format": "uint16",
           "description": "completion percentage (applies to Buffering and Autotuning states)"
         },
         "clusterCount": {
-          "type": "number",
+          "type": "integer",
           "format": "uint32",
           "description": "current cluster count (applies to Learning and Monitoring states)"
         },
         "retryCount": {
-          "type": "number",
+          "type": "integer",
           "format": "uint16",
           "description": "number of restarts that have happened during autotuning"
         },
         "streamingWindowSize": {
-          "type": "number",
+          "type": "integer",
           "format": "uint16",
           "description": "the current streaming window size that is being used"
         },
         "totalInferences": {
-          "type": "number",
+          "type": "integer",
           "format": "uint64",
           "description": "inferences since the most recent restart"
         }

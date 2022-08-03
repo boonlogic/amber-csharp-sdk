@@ -1,4 +1,5 @@
 # BoonAmber.Model.PutConfigResponse
+
 ## Properties
 
 Name | Type | Description | Notes

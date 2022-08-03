@@ -1,4 +1,6 @@
 # BoonAmber.Model.PCA
+array of pca values
+
 ## Properties
 
 Name | Type | Description | Notes

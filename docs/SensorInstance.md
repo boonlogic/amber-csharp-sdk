@@ -1,4 +1,5 @@
 # BoonAmber.Model.SensorInstance
+
 ## Properties
 
 Name | Type | Description | Notes

@@ -1,0 +1,10 @@
+#!/bin/bash
+# Copyright 2022, Boon Logic Inc
+
+swagger_version=v6.0.1
+
+# update docker with latest package
+docker pull openapitools/openapi-generator-cli:${swagger_version}
+
+# run designated swagger command
+docker run --rm --user $(id -u):$(id -g) -w /local -v $PWD:/local openapitools/openapi-generator-cli:${swagger_version} $*
