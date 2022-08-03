@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.IO;
 using System.Diagnostics;
 using BoonAmber.Api;
 using BoonAmber.Client;
@@ -11,28 +12,19 @@ namespace Examples
     {
         static void Main()
         {
-            // Configure API key authorization: authorize-amber-pool
-            //Configuration.Default.ApiKey.Add("Authorization", "YOUR_API_KEY");
-            // Uncomment below to setup prefix (e.g. Bearer) for API key, if needed
-            // Configuration.Default.ApiKeyPrefix.Add("Authorization", "Bearer");
-
             Console.WriteLine("Entered main");
 
-            var apiInstance = new DefaultApi("https://10.0.1.63/v1");
+            //Set the Amber License Info
+            Environment.SetEnvironmentVariable("AMBER_USERNAME", "admin");
+            Environment.SetEnvironmentVariable("AMBER_PASSWORD", "admin");
+            Environment.SetEnvironmentVariable("AMBER_SERVER", "https://10.0.1.63/v1");
 
-            // apiInstance.Configuration.CreateApiClient();
-            // apiInstance.Configuration.BasePath = "https://10.0.1.63/v1";
-            // apiInstance.Configuration.Timeout = 30000;
-            // apiInstance.Configuration.ApiClient.RestClient.Timeout = TimeSpan.FromMilliseconds(30000);
-
-            var body = new PostAuth2Request("admin", "admin");
-
-            Console.WriteLine(body);
+            var apiInstance = new DefaultApi("", "", false, 300000);
 
             try
             {
-                // Delete a sensor instance
-                var result = apiInstance.PostOauth2(body);
+                // Try to get version
+                var result = apiInstance.GetVersion();
                 Console.WriteLine(result);
             }
             catch (Exception e)

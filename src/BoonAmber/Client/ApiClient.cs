@@ -165,7 +165,7 @@ namespace BoonAmber.Client
     {
         private readonly string _baseUrl;
         private readonly bool _verifySSL;
-
+        
         /// <summary>
         /// Specifies the settings on a <see cref="JsonSerializer" /> object.
         /// These settings can be adjusted to accommodate custom serialization rules.
@@ -199,6 +199,7 @@ namespace BoonAmber.Client
         /// <summary>
         /// Initializes a new instance of the <see cref="ApiClient" />, defaulting to the global configurations' base url.
         /// </summary>
+        /// <param name="verify">Whether to verify SSL certificates.</param>
         public ApiClient(bool verify = true)
         {
             _baseUrl = BoonAmber.Client.GlobalConfiguration.Instance.BasePath;
@@ -209,6 +210,7 @@ namespace BoonAmber.Client
         /// Initializes a new instance of the <see cref="ApiClient" />
         /// </summary>
         /// <param name="basePath">The target service's base path in URL format.</param>
+        /// <param name="verify">Whether to verify SSL certificates.</param>
         /// <exception cref="ArgumentException"></exception>
         public ApiClient(string basePath, bool verify = true)
         {
