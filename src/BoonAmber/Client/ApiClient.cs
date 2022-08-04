@@ -526,6 +526,7 @@ namespace BoonAmber.Client
                 response.Data = (T)(object)response.RawBytes;
             }
 
+
             InterceptResponse(req, response);
 
             var result = ToApiResponse(response);

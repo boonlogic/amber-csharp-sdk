@@ -7,6 +7,8 @@ TOP?=$(shell cd .. && git rev-parse --show-toplevel)
 $(info VENV_DIR=$(VENV_DIR))
 $(info INSTALL_ROOT=$(INSTALL_ROOT))
 
+cwd  := $(shell pwd)
+
 default: build
 
 clean:
@@ -20,7 +22,7 @@ install:
 	cp -r src/BoonAmber/bin/* $(INSTALL_ROOT)/lib/
 
 test: build
-	dotnet test src/BoonAmber.Test/BoonAmber.Test.csproj
+	TEST_LICENSE_FILE=$(cwd)/src/BoonAmber.Test/test.Amber.license dotnet test src/BoonAmber.Test/BoonAmber.Test.csproj
 
 run: build
 	dotnet run --project src/examples/examples.csproj

@@ -954,10 +954,23 @@ namespace BoonAmber.Api
         private string token;
         private ulong reauth_time;
         private bool verify;
-        private string username;
-        private string password;
-        private string server;
-        private string oauth_server;
+
+        ///<Summary>
+        /// Oauth2 Username
+        ///</Summary>
+        public string username { get; }
+        ///<Summary>
+        /// Oauth2 Password
+        ///</Summary>
+        public string password { get; }
+        ///<Summary>
+        /// API Server
+        ///</Summary>
+        public string server { get; }
+        ///<Summary>
+        /// Oauth2 Server
+        ///</Summary>
+        public string oauth_server { get; }
 
         private ulong TimeNow() {
             TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
@@ -966,12 +979,25 @@ namespace BoonAmber.Api
         }
 
         /// <summary>
+        /// Formats data as CSV in order to call PostStream
+        /// </summary>
+        /// <param name="data">Array of floating point data</param>
+        /// <returns>
+        /// String of CSV Data
+        /// </returns>
+        public string FormatData(float[] data) {
+            var data_str = String.Join(",", data);
+            return data_str;
+        }
+
+        /// <summary>
         /// Authenticate client for the next hour using the credentials given at
         /// initialization. This acquires and stores an oauth2 token which remains
         /// valid for one hour and is used to authenticate all other API requests.
         /// </summary>
-        private void Authenticate() {
-            if (TimeNow() < this.reauth_time ){
+        /// <returns></returns>
+        public void Authenticate(bool force = false) {
+            if (!force && TimeNow() <= this.reauth_time ){
                 return; //Not Yet
             }
 
@@ -1225,10 +1251,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.DeleteSensor";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -1306,10 +1330,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.DeleteSensor";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -1385,10 +1407,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.GetAmberSummary";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -1466,10 +1486,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.GetAmberSummary";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -1546,10 +1564,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.OperationIndex = operationIndex;
 
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -1627,10 +1643,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.GetConfig";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -1706,10 +1720,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.GetPretrain";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -1787,10 +1799,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.GetPretrain";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -1878,10 +1888,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.GetRootCause";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -1971,10 +1979,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.GetRootCause";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -2050,10 +2056,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.GetSensor";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -2131,10 +2135,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.GetSensor";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -2201,14 +2203,13 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.GetSensors";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
             }
+
             // make the HTTP request
             var localVarResponse = this.Client.Get<GetSensorsResponse>("/sensors", localVarRequestOptions, this.Configuration);
             if (this.ExceptionFactory != null)
@@ -2272,10 +2273,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.GetSensors";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -2351,10 +2350,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.GetStatus";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -2432,10 +2429,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.GetStatus";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -2502,10 +2497,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.GetVersion";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -2574,10 +2567,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.GetVersion";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -2663,10 +2654,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.PostConfig";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -2754,10 +2743,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.PostConfig";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -2980,10 +2967,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.PostOutage";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -3061,10 +3046,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.PostOutage";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -3162,10 +3145,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.PostPretrain";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -3265,10 +3246,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.PostPretrain";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -3345,10 +3324,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.PostSensor";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -3427,15 +3404,12 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.PostSensor";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
             }
-
             // make the HTTP request
             var localVarResponse = await this.AsynchronousClient.PostAsync<PostSensorResponse>("/sensor", localVarRequestOptions, this.Configuration, cancellationToken).ConfigureAwait(false);
 
@@ -3516,10 +3490,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.PostStream";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -3607,10 +3579,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.PostStream";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -3696,10 +3666,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.PutConfig";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -3787,10 +3755,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.PutConfig";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -3876,10 +3842,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.PutSensor";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -3967,10 +3931,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.PutSensor";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -4056,10 +4018,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.PutStream";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
@@ -4147,10 +4107,8 @@ namespace BoonAmber.Api
             localVarRequestOptions.Operation = "DefaultApi.PutStream";
             localVarRequestOptions.OperationIndex = operationIndex;
 
-            //Authenticate
-            this.Authenticate();
-
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!string.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarRequestOptions.HeaderParameters.Add("Authorization", this.Configuration.GetApiKeyWithPrefix("Authorization"));
