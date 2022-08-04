@@ -1,0 +1,10 @@
+#!/bin/bash
+# Copyright 2022, Boon Logic Inc
+
+swagger_version=3.0.34
+
+# update docker with latest package
+docker pull swaggerapi/swagger-codegen-cli-v3:${swagger_version}
+
+# run designated swagger command
+docker run --rm --user $(id -u):$(id -g) -w /gen -e GEN_DIR=/gen -v $PWD:/gen swaggerapi/swagger-codegen-cli-v3:${swagger_version} $*
