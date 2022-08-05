@@ -118,7 +118,7 @@ namespace BoonAmber.Client
             DefaultHeader = new ConcurrentDictionary<string, string>();
             ApiKey = new ConcurrentDictionary<string, string>();
             ApiKeyPrefix = new ConcurrentDictionary<string, string>();
-
+            Verify = true;
             Timeout = 100000;
         }
 
@@ -172,6 +172,7 @@ namespace BoonAmber.Client
         /// <param name="dateTimeFormat">DateTime format string</param>
         /// <param name="timeout">HTTP connection timeout (in milliseconds)</param>
         /// <param name="userAgent">HTTP user agent</param>
+        /// <param name="Verify">Whether to verify SSL certs</param>
         [Obsolete("Use explicit object construction and setting of properties.", true)]
         public Configuration(
             // ReSharper disable UnusedParameter.Local
@@ -185,7 +186,8 @@ namespace BoonAmber.Client
             string tempFolderPath = null,
             string dateTimeFormat = null,
             int timeout = 100000,
-            string userAgent = "Swagger-Codegen/1.0.0/csharp"
+            string userAgent = "Swagger-Codegen/1.0.0/csharp",
+            bool Verify = true
             // ReSharper restore UnusedParameter.Local
             )
         {
@@ -286,6 +288,12 @@ namespace BoonAmber.Client
         /// </summary>
         /// <value>The password.</value>
         public virtual string Password { get; set; }
+
+        /// <summary>
+        /// Get or Set whether to verify SSL certs.
+        /// </summary>
+        /// <value>The password.</value>
+        public virtual bool Verify { get; set; }
 
         /// <summary>
         /// Gets the API key with prefix.
@@ -425,7 +433,7 @@ namespace BoonAmber.Client
         /// <returns></returns>
         public ApiClient CreateApiClient()
         {
-            return new ApiClient(BasePath) { Configuration = this };
+            return new ApiClient(BasePath, Verify) { Configuration = this };
         }
 
 

@@ -19,11 +19,14 @@ test:
 run:
 	make -C $(CSHARP_VERSION) run
 
+package:
+	echo 'TODO'
+
 # Warning: make generate will overwrite some custom code
 ifeq ($(DOTNET_VERSION), netcore)
 generate:
 	codegen/openapi-codegen generate -i amber-api.json -g csharp-netcore -o netcore --generate-alias-as-model -c netcore/swagger-config.json
 else
 generate:
-	codegen/swagger-codegen generate -i amber-api.json -l csharp -o netframework -c netframework/swagger-config.json
+	codegen/swagger-codegen generate -i amber-api.json -l csharp -o netframework2 -c netframework/swagger-config.json
 endif

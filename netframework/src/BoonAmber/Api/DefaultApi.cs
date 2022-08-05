@@ -10,10 +10,12 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using RestSharp;
 using BoonAmber.Client;
 using BoonAmber.Model;
+
 
 namespace BoonAmber.Api
 {
@@ -823,42 +825,184 @@ namespace BoonAmber.Api
     {
         private BoonAmber.Client.ExceptionFactory _exceptionFactory = (name, response) => null;
 
+        //Boon Authorization and License Variables
+        private string token;
+        private ulong reauth_time;
+        private bool verify;
+
+        ///<Summary>
+        /// Oauth2 Username
+        ///</Summary>
+        public string username { get; }
+        ///<Summary>
+        /// Oauth2 Password
+        ///</Summary>
+        public string password { get; }
+        ///<Summary>
+        /// API Server
+        ///</Summary>
+        public string server { get; }
+        ///<Summary>
+        /// Oauth2 Server
+        ///</Summary>
+        public string oauth_server { get; }
+
+        private ulong TimeNow() {
+            TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+            ulong secondsSinceEpoch = (ulong)t.TotalSeconds;
+            return secondsSinceEpoch;
+        }
+
+        /// <summary>
+        /// Formats data as CSV in order to call PostStream
+        /// </summary>
+        /// <param name="data">Array of floating point data</param>
+        /// <returns>
+        /// String of CSV Data
+        /// </returns>
+        public string FormatData(float[] data) {
+            var data_str = String.Join(",", data);
+            return data_str;
+        }
+
+        /// <summary>
+        /// Authenticate client for the next hour using the credentials given at
+        /// initialization. This acquires and stores an oauth2 token which remains
+        /// valid for one hour and is used to authenticate all other API requests.
+        /// </summary>
+        /// <returns></returns>
+        public void Authenticate(bool force = false) {
+            if (!force && TimeNow() <= this.reauth_time ){
+                return; //Not Yet
+            }
+
+            //Request body
+            var body = new PostAuth2Request(this.username, this.password);
+
+            // post oauth2
+            var response = PostOauth2(body);
+
+            // Get Token
+            this.token = response.IdToken;
+            if (string.IsNullOrEmpty(this.token)){
+                throw new BoonAmber.Client.ApiException(401, "authentication failed: invalid credentials");
+            }
+
+            //Get expiration
+            ulong expire_secs = 0;
+            if (ulong.TryParse(response.ExpiresIn, out expire_secs)){
+                this.reauth_time = TimeNow() + expire_secs - 60;
+            }
+            else {
+                throw new BoonAmber.Client.ApiException(401, "authentication failed: invalid expiration time");
+            }
+
+            string full_authorization = "Bearer " + this.token;
+            this.Configuration.ApiKey.Add("Authorization", this.token);
+
+            //Console.WriteLine("Authenticate: token: {0} reauth_time: {1}", this.token, this.reauth_time);
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultApi"/> class.
         /// </summary>
+        /// <param name="license_id">Unique identifier for license file</param>
+        /// <param name="license_file">Amber license file path</param>
+        /// <param name="verify">Whether or not to verify SSL Certs</param>
+        /// <param name="timeout">Timeouts for API requests (milliseconds)</param>
         /// <returns></returns>
-        public DefaultApi(String basePath)
+        public DefaultApi(string license_id = "default", string license_file = "~/.Amber.license", bool verify = true, int timeout = 300000)
         {
-            this.Configuration = new BoonAmber.Client.Configuration { BasePath = basePath };
 
-            ExceptionFactory = BoonAmber.Client.Configuration.DefaultExceptionFactory;
-        }
+            this.token = null;
+            this.reauth_time = 0;
+            this.verify = verify;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DefaultApi"/> class
-        /// </summary>
-        /// <returns></returns>
-        public DefaultApi()
-        {
-            this.Configuration = BoonAmber.Client.Configuration.Default;
+            var user_agent = "Boon Logic / amber-csharp-sdk / requests";
 
-            ExceptionFactory = BoonAmber.Client.Configuration.DefaultExceptionFactory;
-        }
+            // first load from license file, override from environment if specified
+            string license_path = Environment.GetEnvironmentVariable("AMBER_LICENSE_FILE");
+            license_path = string.IsNullOrEmpty(license_path) ? license_file : license_path;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DefaultApi"/> class
-        /// using Configuration object
-        /// </summary>
-        /// <param name="configuration">An instance of Configuration</param>
-        /// <returns></returns>
-        public DefaultApi(BoonAmber.Client.Configuration configuration = null)
-        {
-            if (configuration == null) // use the default one in Configuration
-                this.Configuration = BoonAmber.Client.Configuration.Default;
-            else
-                this.Configuration = configuration;
+            // determine which license_id to use, override from environment if specified
+            string license_identifier = Environment.GetEnvironmentVariable("AMBER_LICENSE_ID");
+            license_identifier = string.IsNullOrEmpty(license_identifier) ? license_id : license_identifier;
 
-            ExceptionFactory = BoonAmber.Client.Configuration.DefaultExceptionFactory;
+            //empty
+            this.username = "";
+            this.password = "";
+            this.server = "";
+            this.oauth_server = "";
+
+            // try to read license profile
+            if (!string.IsNullOrEmpty(license_path)){
+
+                //Parse Linux Home Path
+                string home_path = license_path.Substring(0, 2);
+                if(home_path == "~/"){
+                    string file_path = license_path.Substring(2);
+                    string full_home_path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                    license_path =  Path.Combine(full_home_path, file_path); 
+                }
+
+                if (File.Exists(license_path)) {
+                    //Read JSON File
+                    var jsonString = File.ReadAllText(license_path);
+                    dynamic json_input = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonString);
+
+                    //Parse Specific Profile
+                    var profile = json_input[license_identifier];
+                    this.username = profile["username"];
+                    this.password = profile["password"];
+                    this.server = profile["server"];
+                    this.oauth_server = profile["oauth-server"];
+                }
+            } 
+
+            // override from environment if specified
+            var temp_username = Environment.GetEnvironmentVariable("AMBER_USERNAME");
+            this.username = string.IsNullOrEmpty(temp_username) ? this.username : temp_username;
+            var temp_password = Environment.GetEnvironmentVariable("AMBER_PASSWORD");
+            this.password = string.IsNullOrEmpty(temp_password) ? this.password : temp_password;
+            var temp_server = Environment.GetEnvironmentVariable("AMBER_SERVER");
+            this.server = string.IsNullOrEmpty(temp_server) ? this.server : temp_server;
+            var temp_oauth_server = Environment.GetEnvironmentVariable("AMBER_OAUTH_SERVER");
+            this.oauth_server = string.IsNullOrEmpty(temp_oauth_server) ? this.oauth_server : temp_oauth_server;
+
+            //fallback oauth server to main server
+            if (string.IsNullOrEmpty(this.oauth_server)){
+                this.oauth_server = this.server;
+            }
+
+            string cert = Environment.GetEnvironmentVariable("AMBER_SSL_CERT");
+
+            //check verify environment variable
+            string verify_str = Environment.GetEnvironmentVariable("AMBER_SSL_VERIFY");
+            if(!string.IsNullOrEmpty(verify_str)){
+                bool temp_verify = false;
+                if (bool.TryParse(verify_str, out temp_verify)){
+                    this.verify = temp_verify;
+                }
+            }
+
+            //Console.WriteLine("Amber: username: {0} password: {1} server: {2} oauth_server: {3} verify: {4}", this.username, this.password, this.server, this.oauth_server, this.verify);
+
+            // verify required profile elements have been created
+            if (this.username == "" ){
+                throw new InvalidOperationException("username not specified");
+            }
+            if (this.password == "" ){
+                throw new InvalidOperationException("password not specified");
+            }
+            if (this.server == "" ){
+                throw new InvalidOperationException("server not specified");
+            }
+
+            //Set the configuration (Create API will be called the first time this.Configuration.ApiClient is used)
+            this.Configuration = new BoonAmber.Client.Configuration { BasePath = this.server, Timeout = timeout, UserAgent = user_agent, Verify = this.verify };
+            this.Configuration.DefaultHeader.Add("Content-Type", "application/json");
+
+            this.ExceptionFactory = BoonAmber.Client.Configuration.DefaultExceptionFactory;
         }
 
         /// <summary>
@@ -867,17 +1011,7 @@ namespace BoonAmber.Api
         /// <value>The base path</value>
         public String GetBasePath()
         {
-            return this.Configuration.ApiClient.RestClient.BaseUrl.ToString();
-        }
-
-        /// <summary>
-        /// Sets the base path of the API client.
-        /// </summary>
-        /// <value>The base path</value>
-        [Obsolete("SetBasePath is deprecated, please do 'Configuration.ApiClient = new ApiClient(\"http://new-path\")' instead.")]
-        public void SetBasePath(String basePath)
-        {
-            // do nothing
+            return this.Configuration.BasePath;
         }
 
         /// <summary>
@@ -970,7 +1104,9 @@ namespace BoonAmber.Api
                 localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
 
             if (sensorId != null) localVarHeaderParams.Add("sensorId", this.Configuration.ApiClient.ParameterToString(sensorId)); // header parameter
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -1041,7 +1177,9 @@ namespace BoonAmber.Api
                 localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
 
             if (sensorId != null) localVarHeaderParams.Add("sensorId", this.Configuration.ApiClient.ParameterToString(sensorId)); // header parameter
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -1111,7 +1249,9 @@ namespace BoonAmber.Api
                 localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
 
             if (sensorId != null) localVarHeaderParams.Add("sensorId", this.Configuration.ApiClient.ParameterToString(sensorId)); // header parameter
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -1182,7 +1322,9 @@ namespace BoonAmber.Api
                 localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
 
             if (sensorId != null) localVarHeaderParams.Add("sensorId", this.Configuration.ApiClient.ParameterToString(sensorId)); // header parameter
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -1252,7 +1394,9 @@ namespace BoonAmber.Api
                 localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
 
             if (sensorId != null) localVarHeaderParams.Add("sensorId", this.Configuration.ApiClient.ParameterToString(sensorId)); // header parameter
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -1323,7 +1467,9 @@ namespace BoonAmber.Api
                 localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
 
             if (sensorId != null) localVarHeaderParams.Add("sensorId", this.Configuration.ApiClient.ParameterToString(sensorId)); // header parameter
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -1393,7 +1539,9 @@ namespace BoonAmber.Api
                 localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
 
             if (sensorId != null) localVarHeaderParams.Add("sensorId", this.Configuration.ApiClient.ParameterToString(sensorId)); // header parameter
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -1464,7 +1612,9 @@ namespace BoonAmber.Api
                 localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
 
             if (sensorId != null) localVarHeaderParams.Add("sensorId", this.Configuration.ApiClient.ParameterToString(sensorId)); // header parameter
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -1540,7 +1690,9 @@ namespace BoonAmber.Api
             if (clusterID != null) localVarQueryParams.AddRange(this.Configuration.ApiClient.ParameterToKeyValuePairs("", "clusterID", clusterID)); // query parameter
             if (pattern != null) localVarQueryParams.AddRange(this.Configuration.ApiClient.ParameterToKeyValuePairs("", "pattern", pattern)); // query parameter
             if (sensorId != null) localVarHeaderParams.Add("sensorId", this.Configuration.ApiClient.ParameterToString(sensorId)); // header parameter
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -1617,7 +1769,9 @@ namespace BoonAmber.Api
             if (clusterID != null) localVarQueryParams.AddRange(this.Configuration.ApiClient.ParameterToKeyValuePairs("", "clusterID", clusterID)); // query parameter
             if (pattern != null) localVarQueryParams.AddRange(this.Configuration.ApiClient.ParameterToKeyValuePairs("", "pattern", pattern)); // query parameter
             if (sensorId != null) localVarHeaderParams.Add("sensorId", this.Configuration.ApiClient.ParameterToString(sensorId)); // header parameter
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -1687,7 +1841,9 @@ namespace BoonAmber.Api
                 localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
 
             if (sensorId != null) localVarHeaderParams.Add("sensorId", this.Configuration.ApiClient.ParameterToString(sensorId)); // header parameter
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -1758,7 +1914,9 @@ namespace BoonAmber.Api
                 localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
 
             if (sensorId != null) localVarHeaderParams.Add("sensorId", this.Configuration.ApiClient.ParameterToString(sensorId)); // header parameter
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -1823,6 +1981,7 @@ namespace BoonAmber.Api
                 localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
 
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -1888,6 +2047,7 @@ namespace BoonAmber.Api
                 localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
 
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -1957,7 +2117,9 @@ namespace BoonAmber.Api
                 localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
 
             if (sensorId != null) localVarHeaderParams.Add("sensorId", this.Configuration.ApiClient.ParameterToString(sensorId)); // header parameter
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -2028,7 +2190,9 @@ namespace BoonAmber.Api
                 localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
 
             if (sensorId != null) localVarHeaderParams.Add("sensorId", this.Configuration.ApiClient.ParameterToString(sensorId)); // header parameter
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -2093,6 +2257,7 @@ namespace BoonAmber.Api
                 localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
 
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -2158,6 +2323,7 @@ namespace BoonAmber.Api
                 localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
 
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -2241,7 +2407,9 @@ namespace BoonAmber.Api
             {
                 localVarPostBody = body; // byte array
             }
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -2326,7 +2494,9 @@ namespace BoonAmber.Api
             {
                 localVarPostBody = body; // byte array
             }
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -2370,6 +2540,7 @@ namespace BoonAmber.Api
         /// <returns>ApiResponse of PostAuth2Response</returns>
         public ApiResponse< PostAuth2Response > PostOauth2WithHttpInfo (PostAuth2Request body)
         {
+
             // verify the required parameter 'body' is set
             if (body == null)
                 throw new ApiException(400, "Missing required parameter 'body' when calling DefaultApi->PostOauth2");
@@ -2543,7 +2714,9 @@ namespace BoonAmber.Api
                 localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
 
             if (sensorId != null) localVarHeaderParams.Add("sensorId", this.Configuration.ApiClient.ParameterToString(sensorId)); // header parameter
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -2614,7 +2787,9 @@ namespace BoonAmber.Api
                 localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
 
             if (sensorId != null) localVarHeaderParams.Add("sensorId", this.Configuration.ApiClient.ParameterToString(sensorId)); // header parameter
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -2704,7 +2879,9 @@ namespace BoonAmber.Api
             {
                 localVarPostBody = body; // byte array
             }
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -2795,7 +2972,9 @@ namespace BoonAmber.Api
             {
                 localVarPostBody = body; // byte array
             }
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -2873,7 +3052,9 @@ namespace BoonAmber.Api
             {
                 localVarPostBody = body; // byte array
             }
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -2952,7 +3133,9 @@ namespace BoonAmber.Api
             {
                 localVarPostBody = body; // byte array
             }
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -3036,7 +3219,9 @@ namespace BoonAmber.Api
             {
                 localVarPostBody = body; // byte array
             }
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -3121,7 +3306,9 @@ namespace BoonAmber.Api
             {
                 localVarPostBody = body; // byte array
             }
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -3205,7 +3392,9 @@ namespace BoonAmber.Api
             {
                 localVarPostBody = body; // byte array
             }
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -3290,7 +3479,9 @@ namespace BoonAmber.Api
             {
                 localVarPostBody = body; // byte array
             }
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -3374,7 +3565,9 @@ namespace BoonAmber.Api
             {
                 localVarPostBody = body; // byte array
             }
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -3459,7 +3652,9 @@ namespace BoonAmber.Api
             {
                 localVarPostBody = body; // byte array
             }
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -3543,7 +3738,9 @@ namespace BoonAmber.Api
             {
                 localVarPostBody = body; // byte array
             }
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");
@@ -3628,7 +3825,9 @@ namespace BoonAmber.Api
             {
                 localVarPostBody = body; // byte array
             }
+
             // authentication (authorize-amber-pool) required
+            this.Authenticate();
             if (!String.IsNullOrEmpty(this.Configuration.GetApiKeyWithPrefix("Authorization")))
             {
                 localVarHeaderParams["Authorization"] = this.Configuration.GetApiKeyWithPrefix("Authorization");

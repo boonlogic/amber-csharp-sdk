@@ -32,6 +32,7 @@ namespace BoonAmber.Client
             ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor
         };
 
+
         /// <summary>
         /// Allows for extending request processing for <see cref="ApiClient"/> generated code.
         /// </summary>
@@ -49,35 +50,16 @@ namespace BoonAmber.Client
         /// Initializes a new instance of the <see cref="ApiClient" /> class
         /// with default configuration.
         /// </summary>
-        public ApiClient()
-        {
-            Configuration = BoonAmber.Client.Configuration.Default;
-            RestClient = new RestClient("http://amber.boonlogic.com/v1");
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ApiClient" /> class
-        /// with default base path (http://amber.boonlogic.com/v1).
-        /// </summary>
-        /// <param name="config">An instance of Configuration.</param>
-        public ApiClient(Configuration config)
-        {
-            Configuration = config ?? BoonAmber.Client.Configuration.Default;
-
-            RestClient = new RestClient(Configuration.BasePath);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ApiClient" /> class
-        /// with default configuration.
-        /// </summary>
         /// <param name="basePath">The base path.</param>
-        public ApiClient(String basePath = "http://amber.boonlogic.com/v1")
+        public ApiClient(String basePath = "http://amber.boonlogic.com/v1", bool verify = true)
         {
            if (String.IsNullOrEmpty(basePath))
                 throw new ArgumentException("basePath cannot be empty");
 
-            RestClient = new RestClient(basePath);
+            this.RestClient = new RestClient(basePath);
+            if (!verify) {
+                this.RestClient.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+            }
             Configuration = Client.Configuration.Default;
         }
 
@@ -133,7 +115,7 @@ namespace BoonAmber.Client
             // add file parameter, if any
             foreach(var param in fileParams)
             {
-                request.AddFile(param.Value.Name, param.Value.Writer, param.Value.FileName, param.Value.ContentType);
+                request.AddFile(param.Value.Name, param.Value.Writer, param.Value.FileName, param.Value.ContentLength);
             }
 
             if (postBody != null) // http body (model or byte[]) parameter
@@ -169,12 +151,12 @@ namespace BoonAmber.Client
 
             // set timeout
             
-            RestClient.Timeout = Configuration.Timeout;
+            this.RestClient.Timeout = Configuration.Timeout;
             // set user agent
-            RestClient.UserAgent = Configuration.UserAgent;
+            this.RestClient.UserAgent = Configuration.UserAgent;
 
             InterceptRequest(request);
-            var response = RestClient.Execute(request);
+            var response = this.RestClient.Execute(request);
             InterceptResponse(request, response);
 
             return (Object) response;
@@ -202,7 +184,7 @@ namespace BoonAmber.Client
                 path, method, queryParams, postBody, headerParams, formParams, fileParams,
                 pathParams, contentType);
             InterceptRequest(request);
-            var response = await RestClient.ExecuteTaskAsync(request);
+            var response = await this.RestClient.ExecuteTaskAsync(request);
             InterceptResponse(request, response);
             return (Object)response;
         }
