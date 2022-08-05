@@ -38,8 +38,8 @@ namespace BoonAmber.Test
             //Set the Amber License Info
             Environment.SetEnvironmentVariable("AMBER_USERNAME", "admin");
             Environment.SetEnvironmentVariable("AMBER_PASSWORD", "admin");
-            Environment.SetEnvironmentVariable("AMBER_SERVER", "https://10.0.1.63/v1");
-            Environment.SetEnvironmentVariable("AMBER_OAUTH_SERVER", "https://10.0.1.63/v1");
+            Environment.SetEnvironmentVariable("AMBER_SERVER", "https://127.0.0.1/v1");
+            Environment.SetEnvironmentVariable("AMBER_OAUTH_SERVER", "https://127.0.0.1/v1");
         }
 
         /// <summary>

@@ -43,7 +43,7 @@ unittest:
     - expert-docker
   script:
     - cd ci-root
-    - make make amber-csharp-sdk-test
+    - make amber-csharp-sdk-test
 
 package:
   image: docker:latest
