@@ -118,10 +118,10 @@ namespace BoonAmber.Test
             Environment.SetEnvironmentVariable("AMBER_SERVER", "");
             Environment.SetEnvironmentVariable("AMBER_OAUTH_SERVER", "");
             var instance2 = new DefaultApi(amber_license_id, amber_license_file, true, 300000);
-            Assert.AreEqual("admin", instance2.username);
-            Assert.AreEqual("admin", instance2.password);
-            Assert.AreEqual("https://localhost/v1", instance2.server);
-            Assert.AreEqual("https://localhost/v1", instance2.oauth_server);
+            Assert.False(string.IsNullOrEmpty(instance2.username));
+            Assert.False(string.IsNullOrEmpty(instance2.password));
+            Assert.False(string.IsNullOrEmpty(instance2.server));
+            Assert.False(string.IsNullOrEmpty(instance2.oauth_server));
 
             // override items in license file through environment
             Environment.SetEnvironmentVariable("AMBER_USERNAME", "xyyyAmberUser");
