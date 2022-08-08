@@ -35,7 +35,7 @@ packages:
 	cp packages/JsonSubTypes.*/lib/net45/JsonSubTypes.dll bin/JsonSubTypes.dll
 	cp packages/xunit.*/lib/net20/xunit.dll bin/xunit.dll
 
-build:
+build: packages
 	msbuild src/BoonAmber/BoonAmber.csproj
 	msbuild src/BoonAmber.Test/BoonAmber.Test.csproj
 
