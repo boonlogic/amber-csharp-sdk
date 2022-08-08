@@ -6,7 +6,8 @@ TOP?=$(shell cd ../.. && git rev-parse --show-toplevel)
 
 $(info INSTALL_ROOT=$(INSTALL_ROOT))
 
-cwd  := $(shell pwd)
+CWD  := $(shell pwd)
+AMBER_TEST_LICENSE_FILE?=$(CWD)/src/BoonAmber.Test/test.Amber.license
 
 default: build
 
@@ -15,13 +16,14 @@ clean:
 
 build: 
 	dotnet build src/BoonAmber/BoonAmber.csproj
+	dotnet build src/BoonAmber.Test/BoonAmber.Test.csproj
 
 install: 
 	mkdir -p $(INSTALL_ROOT)/lib && \
 	cp -r src/BoonAmber/bin/* $(INSTALL_ROOT)/lib/
 
-test: build
-	TEST_LICENSE_FILE=$(cwd)/src/BoonAmber.Test/test.Amber.license dotnet test src/BoonAmber.Test/BoonAmber.Test.csproj
+test:
+	AMBER_TEST_LICENSE_FILE=$(AMBER_TEST_LICENSE_FILE) dotnet test src/BoonAmber.Test/BoonAmber.Test.csproj
 
-run: build
+run:
 	dotnet run --project src/examples/examples.csproj

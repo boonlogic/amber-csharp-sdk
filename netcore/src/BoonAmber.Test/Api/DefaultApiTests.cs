@@ -32,20 +32,33 @@ namespace BoonAmber.Test.Api
     public class DefaultApiTests : IDisposable
     {
         private DefaultApi instance;
+        private string amber_license_file;
+        private string amber_license_id;
 
         private void RestoreEnvironment(){
-            //Set the Amber License Info
-            Environment.SetEnvironmentVariable("AMBER_USERNAME", "admin");
-            Environment.SetEnvironmentVariable("AMBER_PASSWORD", "admin");
-            Environment.SetEnvironmentVariable("AMBER_SERVER", "https://127.0.0.1/v1");
-            Environment.SetEnvironmentVariable("AMBER_OAUTH_SERVER", "https://127.0.0.1/v1");
+            //License File
+            amber_license_file = Environment.GetEnvironmentVariable("AMBER_TEST_LICENSE_FILE");
+            amber_license_id = Environment.GetEnvironmentVariable("AMBER_TEST_LICENSE_ID");
+
+            //defaults
+            if (string.IsNullOrEmpty(amber_license_file)){
+                amber_license_file = "../test.Amber.license";
+            }
+            if (string.IsNullOrEmpty(amber_license_id)){
+                amber_license_id = "default";
+            }
+
+            //clear env
+            Environment.SetEnvironmentVariable("AMBER_USERNAME", "");
+            Environment.SetEnvironmentVariable("AMBER_PASSWORD", "");
+            Environment.SetEnvironmentVariable("AMBER_SERVER", "");
+            Environment.SetEnvironmentVariable("AMBER_OAUTH_SERVER", "");
         }
 
         public DefaultApiTests()
         {
             RestoreEnvironment();
-
-            instance = new DefaultApi("", "", false, 300000);
+            instance = new DefaultApi(amber_license_id, amber_license_file, false, 300000);
         }
 
         public void Dispose()
@@ -77,36 +90,41 @@ namespace BoonAmber.Test.Api
             Assert.False(string.IsNullOrEmpty(response.IdToken));
             Assert.False(string.IsNullOrEmpty(response.ExpiresIn));
 
-            //License File
-            string test_license_path = Environment.GetEnvironmentVariable("TEST_LICENSE_FILE");
-            if (string.IsNullOrEmpty(test_license_path)){
-                test_license_path = "../test.Amber.license";
-            }
+            //Set the License Info with env
+            Environment.SetEnvironmentVariable("AMBER_USERNAME", "admin");
+            Environment.SetEnvironmentVariable("AMBER_PASSWORD", "admin");
+            Environment.SetEnvironmentVariable("AMBER_SERVER", "https://localhost:5007/v1");
+            Environment.SetEnvironmentVariable("AMBER_OAUTH_SERVER", "https://localhost:5007/v1");
+            var instance1 = new DefaultApi("", "", false, 300000);
+            Assert.Equal("admin", instance1.username);
+            Assert.Equal("admin", instance1.password);
+            Assert.Equal("https://localhost:5007/v1", instance1.server);
+            Assert.Equal("https://localhost:5007/v1", instance1.oauth_server);
 
             // Test With license file
             Environment.SetEnvironmentVariable("AMBER_USERNAME", "");
             Environment.SetEnvironmentVariable("AMBER_PASSWORD", "");
             Environment.SetEnvironmentVariable("AMBER_SERVER", "");
             Environment.SetEnvironmentVariable("AMBER_OAUTH_SERVER", "");
-            var instance2 = new DefaultApi("default", test_license_path, true, 300000);
+            var instance2 = new DefaultApi(amber_license_id, amber_license_file, true, 300000);
             Assert.Equal("admin", instance2.username);
             Assert.Equal("admin", instance2.password);
-            Assert.Equal("https://localhost:5007/v1", instance2.server);
-            Assert.Equal("https://localhost:5007/v1", instance2.oauth_server);
+            Assert.Equal("https://localhost/v1", instance2.server);
+            Assert.Equal("https://localhost/v1", instance2.oauth_server);
 
             // override items in license file through environment
             Environment.SetEnvironmentVariable("AMBER_USERNAME", "xyyyAmberUser");
             Environment.SetEnvironmentVariable("AMBER_PASSWORD", "bogus_password");
             Environment.SetEnvironmentVariable("AMBER_SERVER", "https://temp.amber.boonlogic.com/v1");
             Environment.SetEnvironmentVariable("AMBER_OAUTH_SERVER", "https://auth.amber.boonlogic.com/v1");
-            var instance3 = new DefaultApi("default", test_license_path, true, 300000);
+            var instance3 = new DefaultApi(amber_license_id, amber_license_file, true, 300000);
             Assert.Equal("xyyyAmberUser", instance3.username);
             Assert.Equal("bogus_password", instance3.password);
             Assert.Equal("https://temp.amber.boonlogic.com/v1", instance3.server);
             Assert.Equal("https://auth.amber.boonlogic.com/v1", instance3.oauth_server);
 
             //test auth with garbage credentials
-            var instance4 = new DefaultApi("garbage", test_license_path, true, 300000);
+            var instance4 = new DefaultApi("garbage", amber_license_file, true, 300000);
             var body4 = new PostAuth2Request(instance4.username, instance4.password);
             try {
                 instance4.PostOauth2(body4); // should except

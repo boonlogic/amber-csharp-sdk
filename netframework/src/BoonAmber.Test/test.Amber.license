@@ -2,8 +2,8 @@
     "default": {
         "username": "admin",
         "password": "admin",
-        "server": "https://localhost:5007/v1",
-        "oauth-server": "https://localhost:5007/v1"
+        "server": "https://localhost/v1",
+        "oauth-server": "https://localhost/v1"
     },
     "missing-username": {
         "password": "filler-password",

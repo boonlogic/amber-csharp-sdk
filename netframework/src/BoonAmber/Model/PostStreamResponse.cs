@@ -27,11 +27,18 @@ namespace BoonAmber.Model
     /// PostStreamResponse
     /// </summary>
     [DataContract]
-        public partial class PostStreamResponse : StreamStatus,  IEquatable<PostStreamResponse>, IValidatableObject
+        public partial class PostStreamResponse : IEquatable<PostStreamResponse>, IValidatableObject
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="PostStreamResponse" /> class.
         /// </summary>
+        /// <param name="state">state of the sensor, states will be prefixed with a state variable  followed by a colon followed by a message indicating progress.  Possible state variables  are: Not streaming, Buffering, Autotuning, Learning, Learning Complete, Monitoring,  Streaming error,  Autotuning error, Autotuning retry (required).</param>
+        /// <param name="message">message to accompany the current state (required).</param>
+        /// <param name="progress">completion percentage (applies to Buffering and Autotuning states) (required).</param>
+        /// <param name="clusterCount">current cluster count (applies to Learning and Monitoring states) (required).</param>
+        /// <param name="retryCount">number of restarts that have happened during autotuning (required).</param>
+        /// <param name="streamingWindowSize">the current streaming window size that is being used (required).</param>
+        /// <param name="totalInferences">inferences since the most recent restart (required).</param>
         /// <param name="rI">rI (required).</param>
         /// <param name="sI">sI (required).</param>
         /// <param name="aD">aD (required).</param>
@@ -39,8 +46,25 @@ namespace BoonAmber.Model
         /// <param name="aM">aM (required).</param>
         /// <param name="aW">aW (required).</param>
         /// <param name="iD">iD (required).</param>
-        public PostStreamResponse(Uint16Array rI = default(Uint16Array), Uint16Array sI = default(Uint16Array), Uint16Array aD = default(Uint16Array), Uint16Array aH = default(Uint16Array), Float32Array aM = default(Float32Array), Uint16Array aW = default(Uint16Array), Int32Array iD = default(Int32Array), string state = default(string), string message = default(string), int? progress = default(int?), int? clusterCount = default(int?), int? retryCount = default(int?), int? streamingWindowSize = default(int?), int? totalInferences = default(int?)) : base()
+        public PostStreamResponse(string state = default(string), string message = default(string), int progress = default(int), int clusterCount = default(int), int retryCount = default(int), int streamingWindowSize = default(int), int totalInferences = default(int), Uint16Array rI = default(Uint16Array), Uint16Array sI = default(Uint16Array), Uint16Array aD = default(Uint16Array), Uint16Array aH = default(Uint16Array), Float32Array aM = default(Float32Array), Uint16Array aW = default(Uint16Array), Int32Array iD = default(Int32Array))
         {
+            // to ensure "state" is required (not null)
+            if (state == null)
+            {
+                throw new ArgumentNullException("state is a required property for PostStreamResponse and cannot be null");
+            }
+            this.State = state;
+            // to ensure "message" is required (not null)
+            if (message == null)
+            {
+                throw new ArgumentNullException("message is a required property for PostStreamResponse and cannot be null");
+            }
+            this.Message = message;
+            this.Progress = progress;
+            this.ClusterCount = clusterCount;
+            this.RetryCount = retryCount;
+            this.StreamingWindowSize = streamingWindowSize;
+            this.TotalInferences = totalInferences;
             // to ensure "rI" is required (not null)
             if (rI == null)
             {
@@ -105,6 +129,55 @@ namespace BoonAmber.Model
                 this.ID = iD;
             }
         }
+
+        /// <summary>
+        /// state of the sensor, states will be prefixed with a state variable  followed by a colon followed by a message indicating progress.  Possible state variables  are: Not streaming, Buffering, Autotuning, Learning, Learning Complete, Monitoring,  Streaming error,  Autotuning error, Autotuning retry
+        /// </summary>
+        /// <value>state of the sensor, states will be prefixed with a state variable  followed by a colon followed by a message indicating progress.  Possible state variables  are: Not streaming, Buffering, Autotuning, Learning, Learning Complete, Monitoring,  Streaming error,  Autotuning error, Autotuning retry</value>
+        [DataMember(Name = "state", IsRequired = true, EmitDefaultValue = false)]
+        public string State { get; set; }
+
+        /// <summary>
+        /// message to accompany the current state
+        /// </summary>
+        /// <value>message to accompany the current state</value>
+        [DataMember(Name = "message", IsRequired = true, EmitDefaultValue = false)]
+        public string Message { get; set; }
+
+        /// <summary>
+        /// completion percentage (applies to Buffering and Autotuning states)
+        /// </summary>
+        /// <value>completion percentage (applies to Buffering and Autotuning states)</value>
+        [DataMember(Name = "progress", IsRequired = true, EmitDefaultValue = false)]
+        public int Progress { get; set; }
+
+        /// <summary>
+        /// current cluster count (applies to Learning and Monitoring states)
+        /// </summary>
+        /// <value>current cluster count (applies to Learning and Monitoring states)</value>
+        [DataMember(Name = "clusterCount", IsRequired = true, EmitDefaultValue = false)]
+        public int ClusterCount { get; set; }
+
+        /// <summary>
+        /// number of restarts that have happened during autotuning
+        /// </summary>
+        /// <value>number of restarts that have happened during autotuning</value>
+        [DataMember(Name = "retryCount", IsRequired = true, EmitDefaultValue = false)]
+        public int RetryCount { get; set; }
+
+        /// <summary>
+        /// the current streaming window size that is being used
+        /// </summary>
+        /// <value>the current streaming window size that is being used</value>
+        [DataMember(Name = "streamingWindowSize", IsRequired = true, EmitDefaultValue = false)]
+        public int StreamingWindowSize { get; set; }
+
+        /// <summary>
+        /// inferences since the most recent restart
+        /// </summary>
+        /// <value>inferences since the most recent restart</value>
+        [DataMember(Name = "totalInferences", IsRequired = true, EmitDefaultValue = false)]
+        public int TotalInferences { get; set; }
         
         /// <summary>
         /// Gets or Sets RI
@@ -157,6 +230,13 @@ namespace BoonAmber.Model
             var sb = new StringBuilder();
             sb.Append("class PostStreamResponse {\n");
             sb.Append("  ").Append(base.ToString().Replace("\n", "\n  ")).Append("\n");
+            sb.Append("  State: ").Append(State).Append("\n");
+            sb.Append("  Message: ").Append(Message).Append("\n");
+            sb.Append("  Progress: ").Append(Progress).Append("\n");
+            sb.Append("  ClusterCount: ").Append(ClusterCount).Append("\n");
+            sb.Append("  RetryCount: ").Append(RetryCount).Append("\n");
+            sb.Append("  StreamingWindowSize: ").Append(StreamingWindowSize).Append("\n");
+            sb.Append("  TotalInferences: ").Append(TotalInferences).Append("\n");
             sb.Append("  RI: ").Append(RI).Append("\n");
             sb.Append("  SI: ").Append(SI).Append("\n");
             sb.Append("  AD: ").Append(AD).Append("\n");
@@ -172,7 +252,7 @@ namespace BoonAmber.Model
         /// Returns the JSON string presentation of the object
         /// </summary>
         /// <returns>JSON string presentation of the object</returns>
-        public override string ToJson()
+        public virtual string ToJson()
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
@@ -199,35 +279,65 @@ namespace BoonAmber.Model
 
             return base.Equals(input) && 
                 (
+                    this.State == input.State ||
+                    (this.State != null &&
+                    this.State.Equals(input.State))
+                ) && 
+                (
+                    this.Message == input.Message ||
+                    (this.Message != null &&
+                    this.Message.Equals(input.Message))
+                ) && 
+                (
+                    this.Progress == input.Progress ||
+                    this.Progress.Equals(input.Progress)
+                ) && 
+                (
+                    this.ClusterCount == input.ClusterCount ||
+                    this.ClusterCount.Equals(input.ClusterCount)
+                ) && 
+                (
+                    this.RetryCount == input.RetryCount ||
+                    this.RetryCount.Equals(input.RetryCount)
+                ) && 
+                (
+                    this.StreamingWindowSize == input.StreamingWindowSize ||
+                    this.StreamingWindowSize.Equals(input.StreamingWindowSize)
+                ) && 
+                (
+                    this.TotalInferences == input.TotalInferences ||
+                    this.TotalInferences.Equals(input.TotalInferences)
+                ) && 
+                (
                     this.RI == input.RI ||
                     (this.RI != null &&
                     this.RI.Equals(input.RI))
-                ) && base.Equals(input) && 
+                ) && 
                 (
                     this.SI == input.SI ||
                     (this.SI != null &&
                     this.SI.Equals(input.SI))
-                ) && base.Equals(input) && 
+                ) && 
                 (
                     this.AD == input.AD ||
                     (this.AD != null &&
                     this.AD.Equals(input.AD))
-                ) && base.Equals(input) && 
+                ) && 
                 (
                     this.AH == input.AH ||
                     (this.AH != null &&
                     this.AH.Equals(input.AH))
-                ) && base.Equals(input) && 
+                ) && 
                 (
                     this.AM == input.AM ||
                     (this.AM != null &&
                     this.AM.Equals(input.AM))
-                ) && base.Equals(input) && 
+                ) && 
                 (
                     this.AW == input.AW ||
                     (this.AW != null &&
                     this.AW.Equals(input.AW))
-                ) && base.Equals(input) && 
+                ) && 
                 (
                     this.ID == input.ID ||
                     (this.ID != null &&
@@ -244,6 +354,19 @@ namespace BoonAmber.Model
             unchecked // Overflow is fine, just wrap
             {
                 int hashCode = base.GetHashCode();
+                if (this.State != null)
+                {
+                    hashCode = (hashCode * 59) + this.State.GetHashCode();
+                }
+                if (this.Message != null)
+                {
+                    hashCode = (hashCode * 59) + this.Message.GetHashCode();
+                }
+                hashCode = (hashCode * 59) + this.Progress.GetHashCode();
+                hashCode = (hashCode * 59) + this.ClusterCount.GetHashCode();
+                hashCode = (hashCode * 59) + this.RetryCount.GetHashCode();
+                hashCode = (hashCode * 59) + this.StreamingWindowSize.GetHashCode();
+                hashCode = (hashCode * 59) + this.TotalInferences.GetHashCode();
                 if (this.RI != null)
                     hashCode = hashCode * 59 + this.RI.GetHashCode();
                 if (this.SI != null)
