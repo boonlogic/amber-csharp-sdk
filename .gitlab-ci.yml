@@ -24,7 +24,7 @@ stages:
   - package
 
 build:
-  stage: build
+  stage: build-netcore
   tags:
     - expert-docker
   script:
@@ -33,7 +33,8 @@ build:
     - cd ci-root
     - git checkout ${CI_COMMIT_REF_NAME} || true
     - BRANCH=${CI_COMMIT_REF_NAME} make amber-csharp-sdk-env
-    - make amber-csharp-sdk-build
+    - DOTNET_VERSION=netcore make amber-csharp-sdk-build
+    - DOTNET_VERSION=netframework make amber-csharp-sdk-build
   artifacts:
     paths:
     - ci-root/
@@ -68,6 +69,7 @@ test:
     - export AMBER_TEST_LICENSE_FILE=${PWD}/Amber.license
     - export AMBER_TEST_LICENSE_ID=aoc
     - DOTNET_VERSION=netcore make test
+    - DOTNET_VERSION=netframework make test
 
 package:
   image: docker:latest
@@ -81,4 +83,5 @@ package:
     - pip install awscli
   script:
     - cd ci-root
-    - make amber-csharp-sdk-package
+    - DOTNET_VERSION=netcore make amber-csharp-sdk-package
+    - DOTNET_VERSION=netframework make amber-csharp-sdk-package
