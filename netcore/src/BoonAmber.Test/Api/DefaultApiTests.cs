@@ -80,7 +80,7 @@ namespace BoonAmber.Test.Api
         /// Test authentication methods
         /// </summary>
         [Fact]
-        public void AuthenticatationTest()
+        public void AuthenticationTest()
         {
             // Test with the good instance
             var body = new PostAuth2Request(instance.username, instance.password);

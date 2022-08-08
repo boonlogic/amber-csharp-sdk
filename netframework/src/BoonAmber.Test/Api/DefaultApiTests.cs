@@ -89,7 +89,7 @@ namespace BoonAmber.Test
         /// Test authentication methods
         /// </summary>
         [Test]
-        public void AuthenticatationTest()
+        public void AuthenticationTest()
         {
             // Test with the good instance
             var body = new PostAuth2Request(instance.username, instance.password);
@@ -98,7 +98,6 @@ namespace BoonAmber.Test
             // Check Token and Expiration
             Assert.False(string.IsNullOrEmpty(response.IdToken));
             Assert.False(string.IsNullOrEmpty(response.ExpiresIn));
-
 
             //Set the License Info with env
             Environment.SetEnvironmentVariable("AMBER_USERNAME", "admin");
@@ -151,6 +150,7 @@ namespace BoonAmber.Test
         [Test]
         public void PostSensorTest()
         {
+
             //create sensor 
             var postSensorRequest = new PostSensorRequest("test_sensor_1");
             var post_response = instance.PostSensor(postSensorRequest);
