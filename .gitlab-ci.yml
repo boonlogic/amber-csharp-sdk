@@ -24,7 +24,7 @@ stages:
   - package
 
 build:
-  stage: build-netcore
+  stage: build
   tags:
     - expert-docker
   script:
