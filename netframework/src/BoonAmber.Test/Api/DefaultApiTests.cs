@@ -43,7 +43,7 @@ namespace BoonAmber.Test
 
             //defaults
             if (string.IsNullOrEmpty(amber_license_file)){
-                amber_license_file = "../test.Amber.license";
+                amber_license_file = "../../test.Amber.license";
             }
             if (string.IsNullOrEmpty(amber_license_id)){
                 amber_license_id = "default";
