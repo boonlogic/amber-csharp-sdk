@@ -1067,30 +1067,34 @@ namespace BoonAmber.Api
             this.server = "";
             this.oauth_server = "";
 
-            // try to read license profile
-            if (!string.IsNullOrEmpty(license_path)){
+            try {
+                // try to read license profile
+                if (!string.IsNullOrEmpty(license_path)){
 
-                //Parse Linux Home Path
-                string home_path = license_path.Substring(0, 2);
-                if(home_path == "~/"){
-                    string file_path = license_path.Substring(2);
-                    string full_home_path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-                    license_path =  Path.Combine(full_home_path, file_path); 
-                }
+                    //Parse Linux Home Path
+                    string home_path = license_path.Substring(0, 2);
+                    if(home_path == "~/"){
+                        string file_path = license_path.Substring(2);
+                        string full_home_path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                        license_path =  Path.Combine(full_home_path, file_path); 
+                    }
 
-                if (File.Exists(license_path)) {
-                    //Read JSON File
-                    var jsonString = File.ReadAllText(license_path);
-                    dynamic json_input = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonString);
+                    if (File.Exists(license_path)) {
+                        //Read JSON File
+                        var jsonString = File.ReadAllText(license_path);
+                        dynamic json_input = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonString);
 
-                    //Parse Specific Profile
-                    var profile = json_input[license_identifier];
-                    this.username = profile["username"];
-                    this.password = profile["password"];
-                    this.server = profile["server"];
-                    this.oauth_server = profile["oauth-server"];
-                }
-            } 
+                        //Parse Specific Profile
+                        var profile = json_input[license_identifier];
+                        this.username = profile["username"];
+                        this.password = profile["password"];
+                        this.server = profile["server"];
+                        this.oauth_server = profile["oauth-server"];
+                    }
+                } 
+            } catch (Exception) {
+                // Something went wrong trying to parse the file, continue
+            }
 
             // override from environment if specified
             var temp_username = Environment.GetEnvironmentVariable("AMBER_USERNAME");

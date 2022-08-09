@@ -19,12 +19,12 @@ $(info INSTALL_ROOT=$(INSTALL_ROOT))
 
 CWD  := $(shell pwd)
 NUGET_CLI?=/usr/local/bin/nuget.exe
+AMBER_TEST_LICENSE_FILE?=$(CWD)/src/BoonAmber.Test/test.Amber.license
 
 default: build
 
 clean:
 	rm $(INSTALL_ROOT)/lib/*
-
 
 packages:
 	mkdir -p bin
@@ -33,18 +33,18 @@ packages:
 	cp packages/Newtonsoft.Json.*/lib/net45/Newtonsoft.Json.dll bin/Newtonsoft.Json.dll
 	cp packages/RestSharp.*/lib/net452/RestSharp.dll bin/RestSharp.dll
 	cp packages/JsonSubTypes.*/lib/net45/JsonSubTypes.dll bin/JsonSubTypes.dll
-	cp packages/xunit.*/lib/net20/xunit.dll bin/xunit.dll
+	cp packages/NUnit.*/lib/nunit.framework.dll bin/nunit.framework.dll
 
-build:
+build: packages
 	msbuild src/BoonAmber/BoonAmber.csproj
+	msbuild src/BoonAmber.Test/BoonAmber.Test.csproj
 
 install: 
 	mkdir -p $(INSTALL_ROOT)/lib && \
 	cp -r src/BoonAmber/bin/* $(INSTALL_ROOT)/lib/
 
-test: build
-	msbuild src/BoonAmber.Test/BoonAmber.Test.csproj 
-	TEST_LICENSE_FILE=$(CWD)/src/BoonAmber.Test/test.Amber.license nunit-console src/BoonAmber.Test/bin/Debug/BoonAmber.Test.dll
+test:
+	AMBER_TEST_LICENSE_FILE=$(AMBER_TEST_LICENSE_FILE) nunit-console src/BoonAmber.Test/bin/Debug/BoonAmber.Test.dll
 
 run: build
 	msbuild run --project src/examples/examples.csproj
