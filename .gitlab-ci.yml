@@ -68,7 +68,7 @@ test:
     - export AMBER_TEST_LICENSE_FILE=${PWD}/Amber.license
     - export AMBER_TEST_LICENSE_ID=aoc
     - make test
-
+    
 package:
   image: docker:latest
   stage: package
