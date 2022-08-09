@@ -2,21 +2,25 @@
 
   <PropertyGroup>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo><!-- setting GenerateAssemblyInfo to false causes this bug https://github.com/dotnet/project-system/issues/3934 -->
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net452</TargetFrameworks>
+    <Configuration>Debug</Configuration>
     <AssemblyName>BoonAmber</AssemblyName>
     <PackageId>BoonAmber</PackageId>
     <OutputType>Library</OutputType>
-    <Authors>OpenAPI</Authors>
-    <Company>OpenAPI</Company>
-    <AssemblyTitle>OpenAPI Library</AssemblyTitle>
-    <Description>A library generated from a OpenAPI doc</Description>
+    <Authors>Boon Logic</Authors>
+    <Company>Boon Logic</Company>
+    <LangVersion>8.0</LangVersion>
+    <AssemblyTitle>Boon Amber SDK</AssemblyTitle>
+    <Description>An SDK for interacting with the Boon Logic Amber REST API</Description>
     <Copyright>No Copyright</Copyright>
     <RootNamespace>BoonAmber</RootNamespace>
     <Version>1.0.0</Version>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\BoonAmber.xml</DocumentationFile>
-    <RepositoryUrl>https://github.com/GIT_USER_ID/GIT_REPO_ID.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/boonlogic/amber-csharp-sdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageReleaseNotes>Minor update</PackageReleaseNotes>
+    <PackageReleaseNotes>Version Update</PackageReleaseNotes>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Nullable>annotations</Nullable>
   </PropertyGroup>
 
@@ -26,6 +30,10 @@
     <PackageReference Include="RestSharp" Version="106.13.0" />
     <PackageReference Include="Polly" Version="7.2.3" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
   </ItemGroup>
 
+  <ItemGroup>
+      <None Include="README.md" Pack="true" PackagePath=""/>
+  </ItemGroup>
 </Project>

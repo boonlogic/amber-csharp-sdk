@@ -1,8 +1,0 @@
-{
-  "packageName": "BoonAmber",
-  "packageVersion": "1.0.0",
-  "sourceFolder": "src",
-  "targetFramework": "v4.5",
-  "modelPropertyNaming": "PascalCase",
-  "netCoreProjectFile": "false"
-}

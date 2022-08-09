@@ -4,32 +4,40 @@
 TOP?=$(shell cd .. && git rev-parse --show-toplevel)
 -include $(TOP)/mk/base.mk
 
-# "netcore" or "netframework"
-DOTNET_VERSION?=netcore
+CWD  := $(shell pwd)
+AMBER_TEST_LICENSE_FILE?=$(CWD)/src/BoonAmber.Test/test.Amber.license
+PKG_VERSION ?= 1.0.0
 
-build:
-	make -C $(DOTNET_VERSION) build
+default: build
 
-install:
-	make -C $(DOTNET_VERSION) install
+clean:
+	rm $(INSTALL_ROOT)/lib/*
+
+update_version:
+	sed -i "s:<Version>.*</Version>:<Version>$(PKG_VERSION)</Version>:gi" src/BoonAmber/BoonAmber.csproj
+
+build: update_version
+	dotnet build src/BoonAmber/BoonAmber.csproj
+	dotnet build src/BoonAmber.Test/BoonAmber.Test.csproj
+
+install: 
+	mkdir -p $(INSTALL_ROOT)/lib && \
+	cp -r src/BoonAmber/bin/* $(INSTALL_ROOT)/lib/
 
 test:
-	make -C $(DOTNET_VERSION) test
+	AMBER_TEST_LICENSE_FILE=$(AMBER_TEST_LICENSE_FILE) dotnet test src/BoonAmber.Test/BoonAmber.Test.csproj
 
 test-%:
-	AMBER_TEST_LICENSE_ID=$* make -C $(DOTNET_VERSION) test
+	AMBER_TEST_LICENSE_ID=$* AMBER_TEST_LICENSE_FILE=$(AMBER_TEST_LICENSE_FILE)  dotnet test src/BoonAmber.Test/BoonAmber.Test.csproj
 
 run:
-	make -C $(DOTNET_VERSION) run
+	dotnet run --project src/examples/examples.csproj
 
-package:
-	echo 'TODO'
+package: update_version
+	dotnet pack src/BoonAmber/BoonAmber.csproj
+	dotnet nuget push src/BoonAmber/bin/Debug/BoonAmber.$(PKG_VERSION).nupkg --api-key $(NUGET_API_KEY) --source https://api.nuget.org/v3/index.json
+
 
 # Warning: make generate will overwrite some custom code
-ifeq ($(DOTNET_VERSION), netcore)
 generate:
 	codegen/openapi-codegen generate -i amber-api.json -g csharp-netcore -o netcore --generate-alias-as-model -c netcore/swagger-config.json
-else
-generate:
-	codegen/swagger-codegen generate -i amber-api.json -l csharp -o netframework -c netframework/swagger-config.json
-endif
