@@ -33,14 +33,14 @@ namespace BoonAmber.Test
     public class DefaultApiTests
     {
         private DefaultApi instance;
-
-        private void RestoreEnvironment(){
-            //Set the Amber License Info
-            Environment.SetEnvironmentVariable("AMBER_USERNAME", "admin");
-            Environment.SetEnvironmentVariable("AMBER_PASSWORD", "admin");
-            Environment.SetEnvironmentVariable("AMBER_SERVER", "https://127.0.0.1/v1");
-            Environment.SetEnvironmentVariable("AMBER_OAUTH_SERVER", "https://127.0.0.1/v1");
-        }
+        
+        // private void RestoreEnvironment(){
+        //     //Set the Amber License Info
+        //     Environment.SetEnvironmentVariable("AMBER_USERNAME", "admin");
+        //     Environment.SetEnvironmentVariable("AMBER_PASSWORD", "admin");
+        //     Environment.SetEnvironmentVariable("AMBER_SERVER", "https://127.0.0.1/v1");
+        //     Environment.SetEnvironmentVariable("AMBER_OAUTH_SERVER", "https://127.0.0.1/v1");
+        // }
 
         /// <summary>
         /// Setup before each unit test
@@ -48,9 +48,28 @@ namespace BoonAmber.Test
         [SetUp]
         public void Init()
         {
-            RestoreEnvironment();
+            //Set the Amber License Info
+            var amberLicenseFile = Environment.GetEnvironmentVariable("AMBER_TEST_LICENSE_FILE");
+            var amberLicenseId = Environment.GetEnvironmentVariable("AMBER_TEST_LICENSE_ID");
+            // test if ID is defined
+            Assert.False(string.IsNullOrEmpty(amberLicenseId));
+            
+            // TODO: clear environment variables
 
-            instance = new DefaultApi("", "", false, 300000);
+            if (amberLicenseFile != null)
+            {
+                instance = new DefaultApi(amberLicenseId, amberLicenseFile);
+            }
+            else
+            {
+                // TODO: get secrets
+                // erase next three lines when secrets works
+                Environment.SetEnvironmentVariable("AMBER_USERNAME", "admin");
+                Environment.SetEnvironmentVariable("AMBER_PASSWORD", "admin");
+                Environment.SetEnvironmentVariable("AMBER_SERVER", "https://127.0.0.1:8800/v1");
+                Environment.SetEnvironmentVariable("AMBER_OAUTH_SERVER", "https://amber-local.boonlogic.com/dev");
+                instance = new DefaultApi("", "");
+            }
         }
 
         /// <summary>

@@ -945,6 +945,8 @@ namespace BoonAmber.Api
                     license_path =  Path.Combine(full_home_path, file_path); 
                 }
 
+                var path = Directory.GetCurrentDirectory();
+                // TODO: what is the wroking directory of these tests? test license file is not being found
                 if (File.Exists(license_path)) {
                     //Read JSON File
                     var jsonString = File.ReadAllText(license_path);
@@ -1000,7 +1002,10 @@ namespace BoonAmber.Api
 
             //Set the configuration (Create API will be called the first time this.Configuration.ApiClient is used)
             this.Configuration = new BoonAmber.Client.Configuration { BasePath = this.server, Timeout = timeout, UserAgent = user_agent, Verify = this.verify };
+            this.OauthConfiguration = new BoonAmber.Client.Configuration
+                { BasePath = this.oauth_server, Timeout = timeout, UserAgent = user_agent, Verify = this.verify };
             this.Configuration.DefaultHeader.Add("Content-Type", "application/json");
+            this.OauthConfiguration.DefaultHeader.Add("Content-Type", "application/json");
 
             this.ExceptionFactory = BoonAmber.Client.Configuration.DefaultExceptionFactory;
         }
@@ -1019,6 +1024,12 @@ namespace BoonAmber.Api
         /// </summary>
         /// <value>An instance of the Configuration</value>
         public BoonAmber.Client.Configuration Configuration {get; set;}
+
+        /// <summary>
+        /// Sets the oauth server configuration (could be the same as the configuration but might be different)
+        /// </summary>
+        /// <returns></returns>
+        public BoonAmber.Client.Configuration OauthConfiguration {get; set;}
 
         /// <summary>
         /// Provides a factory method hook for the creation of exceptions.
@@ -2548,7 +2559,7 @@ namespace BoonAmber.Api
             var localVarPath = "/oauth2";
             var localVarPathParams = new Dictionary<String, String>();
             var localVarQueryParams = new List<KeyValuePair<String, String>>();
-            var localVarHeaderParams = new Dictionary<String, String>(this.Configuration.DefaultHeader);
+            var localVarHeaderParams = new Dictionary<String, String>(this.OauthConfiguration.DefaultHeader);
             var localVarFormParams = new Dictionary<String, String>();
             var localVarFileParams = new Dictionary<String, FileParameter>();
             Object localVarPostBody = null;
@@ -2557,19 +2568,19 @@ namespace BoonAmber.Api
             String[] localVarHttpContentTypes = new String[] {
                 "application/json"
             };
-            String localVarHttpContentType = this.Configuration.ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
+            String localVarHttpContentType = this.OauthConfiguration.ApiClient.SelectHeaderContentType(localVarHttpContentTypes);
 
             // to determine the Accept header
             String[] localVarHttpHeaderAccepts = new String[] {
                 "application/json"
             };
-            String localVarHttpHeaderAccept = this.Configuration.ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
+            String localVarHttpHeaderAccept = this.OauthConfiguration.ApiClient.SelectHeaderAccept(localVarHttpHeaderAccepts);
             if (localVarHttpHeaderAccept != null)
                 localVarHeaderParams.Add("Accept", localVarHttpHeaderAccept);
 
             if (body != null && body.GetType() != typeof(byte[]))
             {
-                localVarPostBody = this.Configuration.ApiClient.Serialize(body); // http body (model) parameter
+                localVarPostBody = this.OauthConfiguration.ApiClient.Serialize(body); // http body (model) parameter
             }
             else
             {
@@ -2577,7 +2588,7 @@ namespace BoonAmber.Api
             }
 
             // make the HTTP request
-            IRestResponse localVarResponse = (IRestResponse) this.Configuration.ApiClient.CallApi(localVarPath,
+            IRestResponse localVarResponse = (IRestResponse) this.OauthConfiguration.ApiClient.CallApi(localVarPath,
                 Method.POST, localVarQueryParams, localVarPostBody, localVarHeaderParams, localVarFormParams, localVarFileParams,
                 localVarPathParams, localVarHttpContentType);
 
@@ -2591,7 +2602,7 @@ namespace BoonAmber.Api
 
             return new ApiResponse<PostAuth2Response>(localVarStatusCode,
                 localVarResponse.Headers.ToDictionary(x => x.Name, x => string.Join(",", x.Value)),
-                (PostAuth2Response) this.Configuration.ApiClient.Deserialize(localVarResponse, typeof(PostAuth2Response)));
+                (PostAuth2Response) this.OauthConfiguration.ApiClient.Deserialize(localVarResponse, typeof(PostAuth2Response)));
         }
 
         /// <summary>

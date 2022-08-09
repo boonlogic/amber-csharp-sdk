@@ -16,6 +16,9 @@ install:
 test:
 	make -C $(DOTNET_VERSION) test
 
+test-%:
+	AMBER_TEST_LICENSE_ID=$* make -C $(DOTNET_VERSION) test
+
 run:
 	make -C $(CSHARP_VERSION) run
 
