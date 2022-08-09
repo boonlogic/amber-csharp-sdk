@@ -33,7 +33,7 @@ packages:
 	cp packages/Newtonsoft.Json.*/lib/net45/Newtonsoft.Json.dll bin/Newtonsoft.Json.dll
 	cp packages/RestSharp.*/lib/net452/RestSharp.dll bin/RestSharp.dll
 	cp packages/JsonSubTypes.*/lib/net45/JsonSubTypes.dll bin/JsonSubTypes.dll
-	cp packages/xunit.*/lib/net20/xunit.dll bin/xunit.dll
+	cp packages/NUnit.*/lib/nunit.framework.dll bin/nunit.framework.dll
 
 build: packages
 	msbuild src/BoonAmber/BoonAmber.csproj
