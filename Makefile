@@ -13,8 +13,7 @@ build:
 install:
 	make -C $(DOTNET_VERSION) install
 
-test:
-	make -C $(DOTNET_VERSION) test
+test: test-aoc
 
 test-%:
 	AMBER_TEST_LICENSE_ID=$* make -C $(DOTNET_VERSION) test

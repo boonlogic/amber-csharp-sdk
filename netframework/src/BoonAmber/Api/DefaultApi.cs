@@ -900,7 +900,6 @@ namespace BoonAmber.Api
             string full_authorization = "Bearer " + this.token;
             this.Configuration.ApiKey.Add("Authorization", this.token);
 
-            //Console.WriteLine("Authenticate: token: {0} reauth_time: {1}", this.token, this.reauth_time);
         }
 
         /// <summary>
@@ -991,9 +990,7 @@ namespace BoonAmber.Api
                     this.verify = temp_verify;
                 }
             }
-
-            //Console.WriteLine("Amber: username: {0} password: {1} server: {2} oauth_server: {3} verify: {4}", this.username, this.password, this.server, this.oauth_server, this.verify);
-
+            
             // verify required profile elements have been created
             if (this.username == "" ){
                 throw new InvalidOperationException("username not specified");

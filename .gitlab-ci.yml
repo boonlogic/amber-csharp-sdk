@@ -67,7 +67,6 @@ test:
   script:
     - cd ${CI_PROJECT_DIR}/ci-root/packages/amber-csharp-sdk/amber-csharp-sdk
     - export AMBER_TEST_LICENSE_FILE=${PWD}/Amber.license
-    - export AMBER_TEST_LICENSE_ID=aoc
     - DOTNET_VERSION=netcore make test
     - DOTNET_VERSION=netframework make test
 
