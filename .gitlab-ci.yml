@@ -19,6 +19,7 @@ variables:
 
 stages:
   - build
+  - format
   - test-setup
   - test
   - package

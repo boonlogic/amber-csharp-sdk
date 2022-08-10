@@ -28,7 +28,7 @@ format:
 	dotnet format
 
 format-check: format
-	@git diff --exit-code src/BoonAmber/Api/*.cs src/BoonAmber/Client/*.cs src/BoonAmber/Model/*.cs \
+	@git diff --exit-code src/BoonAmber/Api/*.cs src/BoonAmber/Client/*.cs src/BoonAmber/Model/*.cs; \
 	if [ $$? -ne 0 ] ; then echo "format-check failed"; exit 1; fi
 
 test:
