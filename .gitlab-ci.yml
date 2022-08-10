@@ -44,7 +44,7 @@ format:
   tags:
     - expert-docker
   script:
-    - make amber-csharp-sdk-format-check
+    - make amber-csharp-sdk-code-check
 
 test-setup:
   stage: test-setup
