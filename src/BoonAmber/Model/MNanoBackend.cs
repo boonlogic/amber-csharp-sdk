@@ -134,28 +134,28 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.VersionNumber == input.VersionNumber ||
                     this.VersionNumber.Equals(input.VersionNumber)
-                ) && 
+                ) &&
                 (
                     this.MPatternMemory == input.MPatternMemory ||
                     (this.MPatternMemory != null &&
                     this.MPatternMemory.Equals(input.MPatternMemory))
-                ) && 
+                ) &&
                 (
                     this.MInitComplete == input.MInitComplete ||
                     this.MInitComplete.Equals(input.MInitComplete)
-                ) && 
+                ) &&
                 (
                     this.MPatternLength == input.MPatternLength ||
                     this.MPatternLength.Equals(input.MPatternLength)
-                ) && 
+                ) &&
                 (
                     this.MLearningIsOn == input.MLearningIsOn ||
                     this.MLearningIsOn.Equals(input.MLearningIsOn)
-                ) && 
+                ) &&
                 (
                     this.MNumOfPatternsClustered == input.MNumOfPatternsClustered ||
                     this.MNumOfPatternsClustered.Equals(input.MNumOfPatternsClustered)

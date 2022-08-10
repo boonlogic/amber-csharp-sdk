@@ -119,17 +119,17 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.Data == input.Data ||
                     (this.Data != null &&
                     this.Data.Equals(input.Data))
-                ) && 
+                ) &&
                 (
                     this.Format == input.Format ||
                     (this.Format != null &&
                     this.Format.Equals(input.Format))
-                ) && 
+                ) &&
                 (
                     this.AutotuneConfig == input.AutotuneConfig ||
                     this.AutotuneConfig.Equals(input.AutotuneConfig)

@@ -109,12 +109,12 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.Vector == input.Vector ||
                     (this.Vector != null &&
                     this.Vector.Equals(input.Vector))
-                ) && 
+                ) &&
                 (
                     this.Results == input.Results ||
                     (this.Results != null &&

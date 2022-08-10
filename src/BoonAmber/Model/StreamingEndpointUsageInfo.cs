@@ -140,23 +140,23 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.CallsTotal == input.CallsTotal ||
                     this.CallsTotal.Equals(input.CallsTotal)
-                ) && 
+                ) &&
                 (
                     this.CallsThisPeriod == input.CallsThisPeriod ||
                     this.CallsThisPeriod.Equals(input.CallsThisPeriod)
-                ) && 
+                ) &&
                 (
                     this.SamplesTotal == input.SamplesTotal ||
                     this.SamplesTotal.Equals(input.SamplesTotal)
-                ) && 
+                ) &&
                 (
                     this.SamplesThisPeriod == input.SamplesThisPeriod ||
                     this.SamplesThisPeriod.Equals(input.SamplesThisPeriod)
-                ) && 
+                ) &&
                 (
                     this.LastCalled == input.LastCalled ||
                     (this.LastCalled != null &&

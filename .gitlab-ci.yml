@@ -19,6 +19,7 @@ variables:
 
 stages:
   - build
+  - format
   - test-setup
   - test
   - package
@@ -37,6 +38,14 @@ build:
   artifacts:
     paths:
     - ci-root/
+
+format:
+  stage: format
+  tags:
+    - expert-docker
+  script:
+    - cd ci-root
+    - make amber-csharp-sdk-code-check
 
 test-setup:
   stage: test-setup

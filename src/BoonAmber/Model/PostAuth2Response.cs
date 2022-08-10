@@ -145,22 +145,22 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.IdToken == input.IdToken ||
                     (this.IdToken != null &&
                     this.IdToken.Equals(input.IdToken))
-                ) && 
+                ) &&
                 (
                     this.RefreshToken == input.RefreshToken ||
                     (this.RefreshToken != null &&
                     this.RefreshToken.Equals(input.RefreshToken))
-                ) && 
+                ) &&
                 (
                     this.ExpiresIn == input.ExpiresIn ||
                     (this.ExpiresIn != null &&
                     this.ExpiresIn.Equals(input.ExpiresIn))
-                ) && 
+                ) &&
                 (
                     this.TokenType == input.TokenType ||
                     (this.TokenType != null &&

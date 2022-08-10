@@ -125,23 +125,23 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.VersionNumber == input.VersionNumber ||
                     this.VersionNumber.Equals(input.VersionNumber)
-                ) && 
+                ) &&
                 (
                     this.TotalBytesWritten == input.TotalBytesWritten ||
                     this.TotalBytesWritten.Equals(input.TotalBytesWritten)
-                ) && 
+                ) &&
                 (
                     this.TotalBytesProcessed == input.TotalBytesProcessed ||
                     this.TotalBytesProcessed.Equals(input.TotalBytesProcessed)
-                ) && 
+                ) &&
                 (
                     this.LoadBufferLength == input.LoadBufferLength ||
                     this.LoadBufferLength.Equals(input.LoadBufferLength)
-                ) && 
+                ) &&
                 (
                     this.LoadBufferCapacity == input.LoadBufferCapacity ||
                     this.LoadBufferCapacity.Equals(input.LoadBufferCapacity)

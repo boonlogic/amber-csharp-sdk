@@ -24,6 +24,13 @@ install:
 	mkdir -p $(INSTALL_ROOT)/lib && \
 	cp -r src/BoonAmber/bin/* $(INSTALL_ROOT)/lib/
 
+format:
+	dotnet format
+
+format-check: format
+	@git diff --exit-code src/BoonAmber/Api/*.cs src/BoonAmber/Client/*.cs src/BoonAmber/Model/*.cs; \
+	if [ $$? -ne 0 ] ; then echo "format-check failed"; exit 1; fi
+
 test:
 	AMBER_TEST_LICENSE_FILE=$(AMBER_TEST_LICENSE_FILE) dotnet test src/BoonAmber.Test/BoonAmber.Test.csproj
 
@@ -31,6 +38,7 @@ test-%:
 	AMBER_TEST_LICENSE_ID=$* AMBER_TEST_LICENSE_FILE=$(AMBER_TEST_LICENSE_FILE)  dotnet test src/BoonAmber.Test/BoonAmber.Test.csproj
 
 run:
+	dotnet build src/examples/examples.csproj
 	dotnet run --project src/examples/examples.csproj
 
 package: update_version

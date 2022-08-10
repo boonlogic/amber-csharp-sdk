@@ -136,13 +136,13 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.Vector == input.Vector ||
                     this.Vector != null &&
                     input.Vector != null &&
                     this.Vector.SequenceEqual(input.Vector)
-                ) && 
+                ) &&
                 (
                     this.SubmitRule == input.SubmitRule ||
                     this.SubmitRule.Equals(input.SubmitRule)

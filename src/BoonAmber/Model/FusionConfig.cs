@@ -131,12 +131,12 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.Label == input.Label ||
                     (this.Label != null &&
                     this.Label.Equals(input.Label))
-                ) && 
+                ) &&
                 (
                     this.SubmitRule == input.SubmitRule ||
                     this.SubmitRule.Equals(input.SubmitRule)

@@ -171,41 +171,41 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.VersionNumber == input.VersionNumber ||
                     this.VersionNumber.Equals(input.VersionNumber)
-                ) && 
+                ) &&
                 (
                     this.MStatus == input.MStatus ||
                     (this.MStatus != null &&
                     this.MStatus.Equals(input.MStatus))
-                ) && 
+                ) &&
                 (
                     this.MMessage == input.MMessage ||
                     (this.MMessage != null &&
                     this.MMessage.Equals(input.MMessage))
-                ) && 
+                ) &&
                 (
                     this.MProgress == input.MProgress ||
                     this.MProgress.Equals(input.MProgress)
-                ) && 
+                ) &&
                 (
                     this.MCurrentClusterCount == input.MCurrentClusterCount ||
                     this.MCurrentClusterCount.Equals(input.MCurrentClusterCount)
-                ) && 
+                ) &&
                 (
                     this.MRetryCount == input.MRetryCount ||
                     this.MRetryCount.Equals(input.MRetryCount)
-                ) && 
+                ) &&
                 (
                     this.MStreamingWindowSize == input.MStreamingWindowSize ||
                     this.MStreamingWindowSize.Equals(input.MStreamingWindowSize)
-                ) && 
+                ) &&
                 (
                     this.MTotalInferences == input.MTotalInferences ||
                     this.MTotalInferences.Equals(input.MTotalInferences)
-                ) && 
+                ) &&
                 (
                     this.MTotalSamplesWritten == input.MTotalSamplesWritten ||
                     this.MTotalSamplesWritten.Equals(input.MTotalSamplesWritten)

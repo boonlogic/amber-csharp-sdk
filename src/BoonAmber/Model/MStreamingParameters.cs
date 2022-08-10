@@ -148,31 +148,31 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.VersionNumber == input.VersionNumber ||
                     this.VersionNumber.Equals(input.VersionNumber)
-                ) && 
+                ) &&
                 (
                     this.MEnableAutotuning == input.MEnableAutotuning ||
                     this.MEnableAutotuning.Equals(input.MEnableAutotuning)
-                ) && 
+                ) &&
                 (
                     this.MSamplesToBufferForAutotuning == input.MSamplesToBufferForAutotuning ||
                     this.MSamplesToBufferForAutotuning.Equals(input.MSamplesToBufferForAutotuning)
-                ) && 
+                ) &&
                 (
                     this.MGraduationAtRateNumerator == input.MGraduationAtRateNumerator ||
                     this.MGraduationAtRateNumerator.Equals(input.MGraduationAtRateNumerator)
-                ) && 
+                ) &&
                 (
                     this.MGraduationAtRateDenominator == input.MGraduationAtRateDenominator ||
                     this.MGraduationAtRateDenominator.Equals(input.MGraduationAtRateDenominator)
-                ) && 
+                ) &&
                 (
                     this.MGraduateAtMaxClusters == input.MGraduateAtMaxClusters ||
                     this.MGraduateAtMaxClusters.Equals(input.MGraduateAtMaxClusters)
-                ) && 
+                ) &&
                 (
                     this.MGraduateAtMaxSamples == input.MGraduateAtMaxSamples ||
                     this.MGraduateAtMaxSamples.Equals(input.MGraduateAtMaxSamples)

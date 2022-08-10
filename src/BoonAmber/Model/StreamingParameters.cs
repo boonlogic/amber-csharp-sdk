@@ -130,23 +130,23 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.AnomalyHistoryWindow == input.AnomalyHistoryWindow ||
                     this.AnomalyHistoryWindow.Equals(input.AnomalyHistoryWindow)
-                ) && 
+                ) &&
                 (
                     this.LearningRateNumerator == input.LearningRateNumerator ||
                     this.LearningRateNumerator.Equals(input.LearningRateNumerator)
-                ) && 
+                ) &&
                 (
                     this.LearningRateDenominator == input.LearningRateDenominator ||
                     this.LearningRateDenominator.Equals(input.LearningRateDenominator)
-                ) && 
+                ) &&
                 (
                     this.LearningMaxClusters == input.LearningMaxClusters ||
                     this.LearningMaxClusters.Equals(input.LearningMaxClusters)
-                ) && 
+                ) &&
                 (
                     this.LearningMaxSamples == input.LearningMaxSamples ||
                     this.LearningMaxSamples.Equals(input.LearningMaxSamples)

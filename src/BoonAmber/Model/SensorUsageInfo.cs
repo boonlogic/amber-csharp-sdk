@@ -239,57 +239,57 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.PostConfig == input.PostConfig ||
                     (this.PostConfig != null &&
                     this.PostConfig.Equals(input.PostConfig))
-                ) && 
+                ) &&
                 (
                     this.PostOutage == input.PostOutage ||
                     (this.PostOutage != null &&
                     this.PostOutage.Equals(input.PostOutage))
-                ) && 
+                ) &&
                 (
                     this.PostStream == input.PostStream ||
                     (this.PostStream != null &&
                     this.PostStream.Equals(input.PostStream))
-                ) && 
+                ) &&
                 (
                     this.PutSensor == input.PutSensor ||
                     (this.PutSensor != null &&
                     this.PutSensor.Equals(input.PutSensor))
-                ) && 
+                ) &&
                 (
                     this.GetSensor == input.GetSensor ||
                     (this.GetSensor != null &&
                     this.GetSensor.Equals(input.GetSensor))
-                ) && 
+                ) &&
                 (
                     this.GetConfig == input.GetConfig ||
                     (this.GetConfig != null &&
                     this.GetConfig.Equals(input.GetConfig))
-                ) && 
+                ) &&
                 (
                     this.GetStatus == input.GetStatus ||
                     (this.GetStatus != null &&
                     this.GetStatus.Equals(input.GetStatus))
-                ) && 
+                ) &&
                 (
                     this.GetRootCause == input.GetRootCause ||
                     (this.GetRootCause != null &&
                     this.GetRootCause.Equals(input.GetRootCause))
-                ) && 
+                ) &&
                 (
                     this.GetAmberSummary == input.GetAmberSummary ||
                     (this.GetAmberSummary != null &&
                     this.GetAmberSummary.Equals(input.GetAmberSummary))
-                ) && 
+                ) &&
                 (
                     this.PostPretrain == input.PostPretrain ||
                     (this.PostPretrain != null &&
                     this.PostPretrain.Equals(input.PostPretrain))
-                ) && 
+                ) &&
                 (
                     this.GetPretrain == input.GetPretrain ||
                     (this.GetPretrain != null &&

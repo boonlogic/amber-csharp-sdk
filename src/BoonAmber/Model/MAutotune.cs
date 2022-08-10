@@ -171,43 +171,43 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.VersionNumber == input.VersionNumber ||
                     this.VersionNumber.Equals(input.VersionNumber)
-                ) && 
+                ) &&
                 (
                     this.MAutotuningInProgress == input.MAutotuningInProgress ||
                     this.MAutotuningInProgress.Equals(input.MAutotuningInProgress)
-                ) && 
+                ) &&
                 (
                     this.MPercentComplete == input.MPercentComplete ||
                     this.MPercentComplete.Equals(input.MPercentComplete)
-                ) && 
+                ) &&
                 (
                     this.MAutotuningSucceeded == input.MAutotuningSucceeded ||
                     this.MAutotuningSucceeded.Equals(input.MAutotuningSucceeded)
-                ) && 
+                ) &&
                 (
                     this.MNumPatternsToAutotune == input.MNumPatternsToAutotune ||
                     this.MNumPatternsToAutotune.Equals(input.MNumPatternsToAutotune)
-                ) && 
+                ) &&
                 (
                     this.MErrorStringBuffer == input.MErrorStringBuffer ||
                     (this.MErrorStringBuffer != null &&
                     this.MErrorStringBuffer.Equals(input.MErrorStringBuffer))
-                ) && 
+                ) &&
                 (
                     this.MFeaturesToTuneArray == input.MFeaturesToTuneArray ||
                     this.MFeaturesToTuneArray != null &&
                     input.MFeaturesToTuneArray != null &&
                     this.MFeaturesToTuneArray.SequenceEqual(input.MFeaturesToTuneArray)
-                ) && 
+                ) &&
                 (
                     this.MNCP == input.MNCP ||
                     (this.MNCP != null &&
                     this.MNCP.Equals(input.MNCP))
-                ) && 
+                ) &&
                 (
                     this.MAP == input.MAP ||
                     (this.MAP != null &&

@@ -165,33 +165,33 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.State == input.State ||
                     (this.State != null &&
                     this.State.Equals(input.State))
-                ) && 
+                ) &&
                 (
                     this.Message == input.Message ||
                     (this.Message != null &&
                     this.Message.Equals(input.Message))
-                ) && 
+                ) &&
                 (
                     this.Progress == input.Progress ||
                     this.Progress.Equals(input.Progress)
-                ) && 
+                ) &&
                 (
                     this.ClusterCount == input.ClusterCount ||
                     this.ClusterCount.Equals(input.ClusterCount)
-                ) && 
+                ) &&
                 (
                     this.RetryCount == input.RetryCount ||
                     this.RetryCount.Equals(input.RetryCount)
-                ) && 
+                ) &&
                 (
                     this.StreamingWindowSize == input.StreamingWindowSize ||
                     this.StreamingWindowSize.Equals(input.StreamingWindowSize)
-                ) && 
+                ) &&
                 (
                     this.TotalInferences == input.TotalInferences ||
                     this.TotalInferences.Equals(input.TotalInferences)
