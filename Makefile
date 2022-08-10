@@ -38,6 +38,11 @@ package: update_version
 	dotnet nuget push src/BoonAmber/bin/Debug/BoonAmber.$(PKG_VERSION).nupkg --api-key $(NUGET_API_KEY) --source https://api.nuget.org/v3/index.json
 
 
-# Warning: make generate will overwrite some custom code
+# Generate will only update the models folder, DefaultAPI.cs will need to be modified
+# Add other models to the list of git checkouts if needed
 generate:
-	codegen/openapi-codegen generate -i amber-api.json -g csharp-netcore -o netcore --generate-alias-as-model -c netcore/swagger-config.json
+	codegen/openapi-codegen generate -i amber-api.json -g csharp-netcore -o swagger_temp --generate-alias-as-model -c swagger-config.json
+	rm -rf src/BoonAmber/Model
+	mv swagger_temp/src/BoonAmber/Model src/BoonAmber/
+	rm -rf swagger_temp
+	cd src/BoonAmber/Model/ && git checkout -- PCA.cs
