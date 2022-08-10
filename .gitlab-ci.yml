@@ -44,6 +44,7 @@ format:
   tags:
     - expert-docker
   script:
+    - cd ci-root
     - make amber-csharp-sdk-code-check
 
 test-setup:
