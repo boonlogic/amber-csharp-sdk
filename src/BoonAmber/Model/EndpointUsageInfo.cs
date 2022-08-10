@@ -120,15 +120,15 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.CallsTotal == input.CallsTotal ||
                     this.CallsTotal.Equals(input.CallsTotal)
-                ) && 
+                ) &&
                 (
                     this.CallsThisPeriod == input.CallsThisPeriod ||
                     this.CallsThisPeriod.Equals(input.CallsThisPeriod)
-                ) && 
+                ) &&
                 (
                     this.LastCalled == input.LastCalled ||
                     (this.LastCalled != null &&

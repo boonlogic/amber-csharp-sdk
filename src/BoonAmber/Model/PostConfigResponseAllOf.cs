@@ -134,25 +134,25 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.FeatureCount == input.FeatureCount ||
                     this.FeatureCount.Equals(input.FeatureCount)
-                ) && 
+                ) &&
                 (
                     this.StreamingWindowSize == input.StreamingWindowSize ||
                     this.StreamingWindowSize.Equals(input.StreamingWindowSize)
-                ) && 
+                ) &&
                 (
                     this.Features == input.Features ||
                     this.Features != null &&
                     input.Features != null &&
                     this.Features.SequenceEqual(input.Features)
-                ) && 
+                ) &&
                 (
                     this.SamplesToBuffer == input.SamplesToBuffer ||
                     this.SamplesToBuffer.Equals(input.SamplesToBuffer)
-                ) && 
+                ) &&
                 (
                     this.PercentVariationOverride == input.PercentVariationOverride ||
                     this.PercentVariationOverride.Equals(input.PercentVariationOverride)
@@ -190,7 +190,7 @@ namespace BoonAmber.Model
             // StreamingWindowSize (int) maximum
             if (this.StreamingWindowSize > (int)500)
             {
-                yield return new System.ComponentModel.DataAnnotations.ValidationResult("Invalid value for StreamingWindowSize, must be a value less than or equal to 500.", new [] { "StreamingWindowSize" });
+                yield return new System.ComponentModel.DataAnnotations.ValidationResult("Invalid value for StreamingWindowSize, must be a value less than or equal to 500.", new[] { "StreamingWindowSize" });
             }
 
             yield break;

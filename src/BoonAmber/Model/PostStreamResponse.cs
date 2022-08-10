@@ -263,67 +263,67 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.State == input.State ||
                     (this.State != null &&
                     this.State.Equals(input.State))
-                ) && 
+                ) &&
                 (
                     this.Message == input.Message ||
                     (this.Message != null &&
                     this.Message.Equals(input.Message))
-                ) && 
+                ) &&
                 (
                     this.Progress == input.Progress ||
                     this.Progress.Equals(input.Progress)
-                ) && 
+                ) &&
                 (
                     this.ClusterCount == input.ClusterCount ||
                     this.ClusterCount.Equals(input.ClusterCount)
-                ) && 
+                ) &&
                 (
                     this.RetryCount == input.RetryCount ||
                     this.RetryCount.Equals(input.RetryCount)
-                ) && 
+                ) &&
                 (
                     this.StreamingWindowSize == input.StreamingWindowSize ||
                     this.StreamingWindowSize.Equals(input.StreamingWindowSize)
-                ) && 
+                ) &&
                 (
                     this.TotalInferences == input.TotalInferences ||
                     this.TotalInferences.Equals(input.TotalInferences)
-                ) && 
+                ) &&
                 (
                     this.RI == input.RI ||
                     (this.RI != null &&
                     this.RI.Equals(input.RI))
-                ) && 
+                ) &&
                 (
                     this.SI == input.SI ||
                     (this.SI != null &&
                     this.SI.Equals(input.SI))
-                ) && 
+                ) &&
                 (
                     this.AD == input.AD ||
                     (this.AD != null &&
                     this.AD.Equals(input.AD))
-                ) && 
+                ) &&
                 (
                     this.AH == input.AH ||
                     (this.AH != null &&
                     this.AH.Equals(input.AH))
-                ) && 
+                ) &&
                 (
                     this.AM == input.AM ||
                     (this.AM != null &&
                     this.AM.Equals(input.AM))
-                ) && 
+                ) &&
                 (
                     this.AW == input.AW ||
                     (this.AW != null &&
                     this.AW.Equals(input.AW))
-                ) && 
+                ) &&
                 (
                     this.ID == input.ID ||
                     (this.ID != null &&

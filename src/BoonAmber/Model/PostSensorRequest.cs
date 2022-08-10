@@ -90,7 +90,7 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.Label == input.Label ||
                     (this.Label != null &&

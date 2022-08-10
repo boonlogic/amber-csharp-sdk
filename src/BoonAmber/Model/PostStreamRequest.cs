@@ -109,11 +109,11 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.SaveImage == input.SaveImage ||
                     this.SaveImage.Equals(input.SaveImage)
-                ) && 
+                ) &&
                 (
                     this.Data == input.Data ||
                     (this.Data != null &&

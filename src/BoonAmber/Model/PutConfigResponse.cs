@@ -98,13 +98,13 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.Features == input.Features ||
                     this.Features != null &&
                     input.Features != null &&
                     this.Features.SequenceEqual(input.Features)
-                ) && 
+                ) &&
                 (
                     this.Streaming == input.Streaming ||
                     (this.Streaming != null &&

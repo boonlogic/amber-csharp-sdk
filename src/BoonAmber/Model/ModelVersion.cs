@@ -183,37 +183,37 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.Release == input.Release ||
                     (this.Release != null &&
                     this.Release.Equals(input.Release))
-                ) && 
+                ) &&
                 (
                     this.ApiVersion == input.ApiVersion ||
                     (this.ApiVersion != null &&
                     this.ApiVersion.Equals(input.ApiVersion))
-                ) && 
+                ) &&
                 (
                     this.Builder == input.Builder ||
                     (this.Builder != null &&
                     this.Builder.Equals(input.Builder))
-                ) && 
+                ) &&
                 (
                     this.ExpertApi == input.ExpertApi ||
                     (this.ExpertApi != null &&
                     this.ExpertApi.Equals(input.ExpertApi))
-                ) && 
+                ) &&
                 (
                     this.ExpertCommon == input.ExpertCommon ||
                     (this.ExpertCommon != null &&
                     this.ExpertCommon.Equals(input.ExpertCommon))
-                ) && 
+                ) &&
                 (
                     this.NanoSecure == input.NanoSecure ||
                     (this.NanoSecure != null &&
                     this.NanoSecure.Equals(input.NanoSecure))
-                ) && 
+                ) &&
                 (
                     this.SwaggerUi == input.SwaggerUi ||
                     (this.SwaggerUi != null &&

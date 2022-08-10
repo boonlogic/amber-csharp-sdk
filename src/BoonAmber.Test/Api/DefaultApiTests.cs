@@ -35,16 +35,19 @@ namespace BoonAmber.Test.Api
         private string amber_license_file;
         private string amber_license_id;
 
-        private void RestoreEnvironment(){
+        private void RestoreEnvironment()
+        {
             //License File
             amber_license_file = Environment.GetEnvironmentVariable("AMBER_TEST_LICENSE_FILE");
             amber_license_id = Environment.GetEnvironmentVariable("AMBER_TEST_LICENSE_ID");
 
             //defaults
-            if (string.IsNullOrEmpty(amber_license_file)){
+            if (string.IsNullOrEmpty(amber_license_file))
+            {
                 amber_license_file = "../test.Amber.license";
             }
-            if (string.IsNullOrEmpty(amber_license_id)){
+            if (string.IsNullOrEmpty(amber_license_id))
+            {
                 amber_license_id = "default";
             }
 
@@ -126,10 +129,13 @@ namespace BoonAmber.Test.Api
             //test auth with garbage credentials
             var instance4 = new DefaultApi("garbage", amber_license_file, true, 300000);
             var body4 = new PostAuth2Request(instance4.username, instance4.password);
-            try {
+            try
+            {
                 instance4.PostOauth2(body4); // should except
                 Assert.True(false, "Authorization with bad credentials should have raised exception");
-            } catch (Exception) {
+            }
+            catch (Exception)
+            {
                 // Catches the assertion exception, and the test passes
             }
         }
@@ -155,7 +161,8 @@ namespace BoonAmber.Test.Api
         /// Test PutSensor
         /// </summary>
         [Fact]
-        public void UpdateLabelTest(){
+        public void UpdateLabelTest()
+        {
             //create sensor 
             var postSensorRequest = new PostSensorRequest("test_sensor_2");
             var post_response = instance.PostSensor(postSensorRequest);
@@ -179,13 +186,17 @@ namespace BoonAmber.Test.Api
         /// Test PutSensor Negative
         /// </summary>
         [Fact]
-        public void UpdateLabelTestNegative(){
+        public void UpdateLabelTestNegative()
+        {
             //update
             var putSensorRequest = new PutSensorRequest("test_sensor_garbage");
-             try {
+            try
+            {
                 var put_response = instance.PutSensor("nonexistent-sensor-id", putSensorRequest); // should throw
                 Assert.True(false, "Update with bad sensor ID should have raised exception");
-            } catch (Exception) {
+            }
+            catch (Exception)
+            {
                 // Catches the assertion exception, and the test passes
             }
         }
@@ -218,15 +229,19 @@ namespace BoonAmber.Test.Api
         /// Test GetSensor Negative
         /// </summary>
         [Fact]
-        public void GetSensorTestNegative(){
+        public void GetSensorTestNegative()
+        {
 
-            try {
+            try
+            {
                 var get_response = instance.GetSensor("nonexistent-sensor-id"); // should throw
                 Assert.True(false, "GetSensor with bad sensor ID should have raised exception");
-            } catch (Exception) {
+            }
+            catch (Exception)
+            {
                 // Catches the assertion exception, and the test passes
             }
-            
+
         }
 
         /// <summary>
@@ -243,9 +258,9 @@ namespace BoonAmber.Test.Api
                 var post_response = instance.PostSensor(postSensorRequest);
                 Assert.IsType<PostSensorResponse>(post_response);
                 Assert.False(string.IsNullOrEmpty(post_response.SensorId));
-            } 
+            }
 
-            
+
             //get sensor 
             var get_response = instance.GetSensors();
             Assert.IsType<GetSensorsResponse>(get_response);
@@ -256,7 +271,7 @@ namespace BoonAmber.Test.Api
             {
                 var delete_response = instance.DeleteSensor(sensor.SensorId);
                 Assert.IsType<Error>(delete_response);
-            } 
+            }
         }
 
         /// <summary>
@@ -273,17 +288,17 @@ namespace BoonAmber.Test.Api
             Assert.False(string.IsNullOrEmpty(post_response.SensorId));
 
             // configure sensor with custom features
-            List<FeatureConfig> features = new List<FeatureConfig>{ new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
+            List<FeatureConfig> features = new List<FeatureConfig> { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
 
 
-            var postConfigRequest = new PostConfigRequest(anomalyHistoryWindow: 1000, 
-                                                    learningRateNumerator: 10, 
-                                                    learningRateDenominator: 10000, 
-                                                    learningMaxClusters: 1000, 
-                                                    learningMaxSamples: 10000000, 
-                                                    featureCount: 1, 
+            var postConfigRequest = new PostConfigRequest(anomalyHistoryWindow: 1000,
+                                                    learningRateNumerator: 10,
+                                                    learningRateDenominator: 10000,
+                                                    learningMaxClusters: 1000,
+                                                    learningMaxSamples: 10000000,
+                                                    featureCount: 1,
                                                     streamingWindowSize: 25,
-                                                    features: features, 
+                                                    features: features,
                                                     samplesToBuffer: 1000
                                                 );
 
@@ -329,23 +344,26 @@ namespace BoonAmber.Test.Api
             Assert.False(string.IsNullOrEmpty(post_response.SensorId));
 
             // configure sensor with invalid feature count
-            List<FeatureConfig> features = new List<FeatureConfig>{ new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
+            List<FeatureConfig> features = new List<FeatureConfig> { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
 
 
-            var postConfigRequest = new PostConfigRequest(anomalyHistoryWindow: 1000, 
-                                                    learningRateNumerator: 10, 
-                                                    learningRateDenominator: 10000, 
-                                                    learningMaxClusters: 1000, 
-                                                    learningMaxSamples: 10000000, 
-                                                    featureCount: -1, 
+            var postConfigRequest = new PostConfigRequest(anomalyHistoryWindow: 1000,
+                                                    learningRateNumerator: 10,
+                                                    learningRateDenominator: 10000,
+                                                    learningMaxClusters: 1000,
+                                                    learningMaxSamples: 10000000,
+                                                    featureCount: -1,
                                                     streamingWindowSize: 25,
-                                                    features: features, 
+                                                    features: features,
                                                     samplesToBuffer: 1000
                                                 );
-            try {
+            try
+            {
                 var config_response = instance.PostConfig(post_response.SensorId, postConfigRequest); // should throw
                 Assert.True(false, "PostConfig with bad feature countshould have raised exception");
-            } catch (Exception) {
+            }
+            catch (Exception)
+            {
                 // Catches the assertion exception, and the test passes
             }
 
@@ -369,15 +387,19 @@ namespace BoonAmber.Test.Api
         /// Test GetConfig Negative
         /// </summary>
         [Fact]
-        public void GetConfigTestNegative(){
+        public void GetConfigTestNegative()
+        {
 
-            try {
+            try
+            {
                 var get_response = instance.GetConfig("nonexistent-sensor-id"); // should throw
                 Assert.True(false, "GetConfig with bad sensor ID should have raised exception");
-            } catch (Exception) {
+            }
+            catch (Exception)
+            {
                 // Catches the assertion exception, and the test passes
             }
-            
+
         }
 
 
@@ -393,24 +415,24 @@ namespace BoonAmber.Test.Api
             var post_response = instance.PostSensor(postSensorRequest);
 
             // configure sensor with invalid feature count
-            List<FeatureConfig> features = new List<FeatureConfig>{ new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
+            List<FeatureConfig> features = new List<FeatureConfig> { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
 
 
-            var postConfigRequest = new PostConfigRequest(anomalyHistoryWindow: 1000, 
-                                                    learningRateNumerator: 10, 
-                                                    learningRateDenominator: 10000, 
-                                                    learningMaxClusters: 1000, 
-                                                    learningMaxSamples: 10000000, 
-                                                    featureCount: 1, 
+            var postConfigRequest = new PostConfigRequest(anomalyHistoryWindow: 1000,
+                                                    learningRateNumerator: 10,
+                                                    learningRateDenominator: 10000,
+                                                    learningMaxClusters: 1000,
+                                                    learningMaxSamples: 10000000,
+                                                    featureCount: 1,
                                                     streamingWindowSize: 25,
-                                                    features: features, 
+                                                    features: features,
                                                     samplesToBuffer: 1000
                                                 );
 
             //post a configuration
             var config_response = instance.PostConfig(post_response.SensorId, postConfigRequest);
 
-            
+
             //stream data
             float[] data = { 1.0f, 2.0f, 3.0f, 4.0f };
             var data_str = instance.FormatData(data);
@@ -426,7 +448,7 @@ namespace BoonAmber.Test.Api
             Assert.Equal(0, post_stream_response.AW[0]);
             Assert.Equal(0, post_stream_response.ID[0]);
             Assert.False(string.IsNullOrEmpty(post_stream_response.State));
-   
+
             //delete sensor
             var delete_response = instance.DeleteSensor(post_response.SensorId);
             Assert.IsType<Error>(delete_response);
@@ -442,15 +464,18 @@ namespace BoonAmber.Test.Api
             var data_str = instance.FormatData(data);
             var postStreamRequest = new PostStreamRequest(data: data_str);
 
-            try {
-                 var post_stream_response = instance.PostStream("nonexistent-sensor-id", postStreamRequest); // should throw
+            try
+            {
+                var post_stream_response = instance.PostStream("nonexistent-sensor-id", postStreamRequest); // should throw
                 Assert.True(false, "PostStream with bad sensor ID should have raised exception");
-            } catch (Exception) {
+            }
+            catch (Exception)
+            {
                 // Catches the assertion exception, and the test passes
             }
 
         }
 
     }
-    
+
 }

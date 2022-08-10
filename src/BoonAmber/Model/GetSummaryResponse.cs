@@ -448,156 +448,156 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.MagicNumber == input.MagicNumber ||
                     this.MagicNumber.Equals(input.MagicNumber)
-                ) && 
+                ) &&
                 (
                     this.VersionNumber == input.VersionNumber ||
                     this.VersionNumber.Equals(input.VersionNumber)
-                ) && 
+                ) &&
                 (
                     this.MNano == input.MNano ||
                     (this.MNano != null &&
                     this.MNano.Equals(input.MNano))
-                ) && 
+                ) &&
                 (
                     this.MBufferStats == input.MBufferStats ||
                     (this.MBufferStats != null &&
                     this.MBufferStats.Equals(input.MBufferStats))
-                ) && 
+                ) &&
                 (
                     this.MAutotune == input.MAutotune ||
                     (this.MAutotune != null &&
                     this.MAutotune.Equals(input.MAutotune))
-                ) && 
+                ) &&
                 (
                     this.MAutotuningElbowClusterCounts == input.MAutotuningElbowClusterCounts ||
                     this.MAutotuningElbowClusterCounts != null &&
                     input.MAutotuningElbowClusterCounts != null &&
                     this.MAutotuningElbowClusterCounts.SequenceEqual(input.MAutotuningElbowClusterCounts)
-                ) && 
+                ) &&
                 (
                     this.MAutotuningElbowPVArray == input.MAutotuningElbowPVArray ||
                     this.MAutotuningElbowPVArray != null &&
                     input.MAutotuningElbowPVArray != null &&
                     this.MAutotuningElbowPVArray.SequenceEqual(input.MAutotuningElbowPVArray)
-                ) && 
+                ) &&
                 (
                     this.MStreamingParameters == input.MStreamingParameters ||
                     (this.MStreamingParameters != null &&
                     this.MStreamingParameters.Equals(input.MStreamingParameters))
-                ) && 
+                ) &&
                 (
                     this.MAmberStatus == input.MAmberStatus ||
                     (this.MAmberStatus != null &&
                     this.MAmberStatus.Equals(input.MAmberStatus))
-                ) && 
+                ) &&
                 (
                     this.MTraining == input.MTraining ||
                     (this.MTraining != null &&
                     this.MTraining.Equals(input.MTraining))
-                ) && 
+                ) &&
                 (
                     this.MAnomalyThreshold == input.MAnomalyThreshold ||
                     this.MAnomalyThreshold.Equals(input.MAnomalyThreshold)
-                ) && 
+                ) &&
                 (
                     this.MAmberWarningCriticalValue == input.MAmberWarningCriticalValue ||
                     this.MAmberWarningCriticalValue.Equals(input.MAmberWarningCriticalValue)
-                ) && 
+                ) &&
                 (
                     this.MAmberAlertCriticalValue == input.MAmberAlertCriticalValue ||
                     this.MAmberAlertCriticalValue.Equals(input.MAmberAlertCriticalValue)
-                ) && 
+                ) &&
                 (
                     this.MErrorStringBuffer == input.MErrorStringBuffer ||
                     (this.MErrorStringBuffer != null &&
                     this.MErrorStringBuffer.Equals(input.MErrorStringBuffer))
-                ) && 
+                ) &&
                 (
                     this.MClusteringParametersInitialized == input.MClusteringParametersInitialized ||
                     this.MClusteringParametersInitialized.Equals(input.MClusteringParametersInitialized)
-                ) && 
+                ) &&
                 (
                     this.MStreamingMode == input.MStreamingMode ||
                     this.MStreamingMode.Equals(input.MStreamingMode)
-                ) && 
+                ) &&
                 (
                     this.MStreamingModeStatus == input.MStreamingModeStatus ||
                     this.MStreamingModeStatus.Equals(input.MStreamingModeStatus)
-                ) && 
+                ) &&
                 (
                     this.MModifiedAt == input.MModifiedAt ||
                     this.MModifiedAt.Equals(input.MModifiedAt)
-                ) && 
+                ) &&
                 (
                     this.MAnomalyMetricByAnomalyCount == input.MAnomalyMetricByAnomalyCount ||
                     this.MAnomalyMetricByAnomalyCount != null &&
                     input.MAnomalyMetricByAnomalyCount != null &&
                     this.MAnomalyMetricByAnomalyCount.SequenceEqual(input.MAnomalyMetricByAnomalyCount)
-                ) && 
+                ) &&
                 (
                     this.MRecentAnomalyCount == input.MRecentAnomalyCount ||
                     this.MRecentAnomalyCount.Equals(input.MRecentAnomalyCount)
-                ) && 
+                ) &&
                 (
                     this.MResultsIDArray == input.MResultsIDArray ||
                     this.MResultsIDArray != null &&
                     input.MResultsIDArray != null &&
                     this.MResultsIDArray.SequenceEqual(input.MResultsIDArray)
-                ) && 
+                ) &&
                 (
                     this.MTrainingSamples == input.MTrainingSamples ||
                     (this.MTrainingSamples != null &&
                     this.MTrainingSamples.Equals(input.MTrainingSamples))
-                ) && 
+                ) &&
                 (
                     this.MRecentSamples == input.MRecentSamples ||
                     (this.MRecentSamples != null &&
                     this.MRecentSamples.Equals(input.MRecentSamples))
-                ) && 
+                ) &&
                 (
                     this.MRecentRawSamples == input.MRecentRawSamples ||
                     (this.MRecentRawSamples != null &&
                     this.MRecentRawSamples.Equals(input.MRecentRawSamples))
-                ) && 
+                ) &&
                 (
                     this.MRecentTimes == input.MRecentTimes ||
                     (this.MRecentTimes != null &&
                     this.MRecentTimes.Equals(input.MRecentTimes))
-                ) && 
+                ) &&
                 (
                     this.MRecentSIs == input.MRecentSIs ||
                     (this.MRecentSIs != null &&
                     this.MRecentSIs.Equals(input.MRecentSIs))
-                ) && 
+                ) &&
                 (
                     this.MRecentRIs == input.MRecentRIs ||
                     (this.MRecentRIs != null &&
                     this.MRecentRIs.Equals(input.MRecentRIs))
-                ) && 
+                ) &&
                 (
                     this.MRecentADs == input.MRecentADs ||
                     (this.MRecentADs != null &&
                     this.MRecentADs.Equals(input.MRecentADs))
-                ) && 
+                ) &&
                 (
                     this.MRecentAHs == input.MRecentAHs ||
                     (this.MRecentAHs != null &&
                     this.MRecentAHs.Equals(input.MRecentAHs))
-                ) && 
+                ) &&
                 (
                     this.MRecentIDs == input.MRecentIDs ||
                     (this.MRecentIDs != null &&
                     this.MRecentIDs.Equals(input.MRecentIDs))
-                ) && 
+                ) &&
                 (
                     this.MRecentAMs == input.MRecentAMs ||
                     (this.MRecentAMs != null &&
                     this.MRecentAMs.Equals(input.MRecentAMs))
-                ) && 
+                ) &&
                 (
                     this.MRecentAWs == input.MRecentAWs ||
                     (this.MRecentAWs != null &&

@@ -145,31 +145,31 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.VersionNumber == input.VersionNumber ||
                     this.VersionNumber != null &&
                     input.VersionNumber != null &&
                     this.VersionNumber.SequenceEqual(input.VersionNumber)
-                ) && 
+                ) &&
                 (
                     this.MGeometricPlotY == input.MGeometricPlotY ||
                     this.MGeometricPlotY != null &&
                     input.MGeometricPlotY != null &&
                     this.MGeometricPlotY.SequenceEqual(input.MGeometricPlotY)
-                ) && 
+                ) &&
                 (
                     this.MGeometricPlotX == input.MGeometricPlotX ||
                     this.MGeometricPlotX != null &&
                     input.MGeometricPlotX != null &&
                     this.MGeometricPlotX.SequenceEqual(input.MGeometricPlotX)
-                ) && 
+                ) &&
                 (
                     this.MClusterGrowth == input.MClusterGrowth ||
                     this.MClusterGrowth != null &&
                     input.MClusterGrowth != null &&
                     this.MClusterGrowth.SequenceEqual(input.MClusterGrowth)
-                ) && 
+                ) &&
                 (
                     this.MAnomalyIndexes == input.MAnomalyIndexes ||
                     this.MAnomalyIndexes != null &&

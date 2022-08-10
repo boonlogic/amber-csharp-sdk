@@ -139,27 +139,27 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.VersionNumber == input.VersionNumber ||
                     this.VersionNumber.Equals(input.VersionNumber)
-                ) && 
+                ) &&
                 (
                     this.MAutotuneRange == input.MAutotuneRange ||
                     this.MAutotuneRange.Equals(input.MAutotuneRange)
-                ) && 
+                ) &&
                 (
                     this.MAutotunePV == input.MAutotunePV ||
                     this.MAutotunePV.Equals(input.MAutotunePV)
-                ) && 
+                ) &&
                 (
                     this.MAutotuneByFeatures == input.MAutotuneByFeatures ||
                     this.MAutotuneByFeatures.Equals(input.MAutotuneByFeatures)
-                ) && 
+                ) &&
                 (
                     this.MMaxClusters == input.MMaxClusters ||
                     this.MMaxClusters.Equals(input.MMaxClusters)
-                ) && 
+                ) &&
                 (
                     this.MFeaturesToTuneArray == input.MFeaturesToTuneArray ||
                     this.MFeaturesToTuneArray != null &&

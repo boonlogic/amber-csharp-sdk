@@ -108,11 +108,11 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.VersionNumber == input.VersionNumber ||
                     this.VersionNumber.Equals(input.VersionNumber)
-                ) && 
+                ) &&
                 (
                     this.MValues == input.MValues ||
                     this.MValues != null &&

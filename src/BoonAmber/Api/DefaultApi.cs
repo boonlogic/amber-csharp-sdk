@@ -495,7 +495,8 @@ namespace BoonAmber.Api
         ///</Summary>
         public string oauth_server { get; }
 
-        private ulong TimeNow() {
+        private ulong TimeNow()
+        {
             TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
             ulong secondsSinceEpoch = (ulong)t.TotalSeconds;
             return secondsSinceEpoch;
@@ -508,7 +509,8 @@ namespace BoonAmber.Api
         /// <returns>
         /// String of CSV Data
         /// </returns>
-        public string FormatData(float[] data) {
+        public string FormatData(float[] data)
+        {
             var data_str = String.Join(",", data);
             return data_str;
         }
@@ -519,8 +521,10 @@ namespace BoonAmber.Api
         /// valid for one hour and is used to authenticate all other API requests.
         /// </summary>
         /// <returns></returns>
-        public void Authenticate(bool force = false) {
-            if (!force && TimeNow() <= this.reauth_time ){
+        public void Authenticate(bool force = false)
+        {
+            if (!force && TimeNow() <= this.reauth_time)
+            {
                 return; //Not Yet
             }
 
@@ -532,16 +536,19 @@ namespace BoonAmber.Api
 
             // Get Token
             this.token = response.IdToken;
-            if (string.IsNullOrEmpty(this.token)){
+            if (string.IsNullOrEmpty(this.token))
+            {
                 throw new BoonAmber.Client.ApiException(401, "authentication failed: invalid credentials");
             }
 
             //Get expiration
             ulong expire_secs = 0;
-            if (ulong.TryParse(response.ExpiresIn, out expire_secs)){
+            if (ulong.TryParse(response.ExpiresIn, out expire_secs))
+            {
                 this.reauth_time = TimeNow() + expire_secs - 60;
             }
-            else {
+            else
+            {
                 throw new BoonAmber.Client.ApiException(401, "authentication failed: invalid expiration time");
             }
 
@@ -590,19 +597,23 @@ namespace BoonAmber.Api
             this.server = "";
             this.oauth_server = "";
 
-            try {
+            try
+            {
                 // try to read license profile
-                if (!string.IsNullOrEmpty(license_path)){
+                if (!string.IsNullOrEmpty(license_path))
+                {
 
                     //Parse Linux Home Path
                     string home_path = license_path.Substring(0, 2);
-                    if(home_path == "~/"){
+                    if (home_path == "~/")
+                    {
                         string file_path = license_path.Substring(2);
                         string full_home_path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-                        license_path =  Path.Combine(full_home_path, file_path); 
+                        license_path = Path.Combine(full_home_path, file_path);
                     }
 
-                    if (File.Exists(license_path)) {
+                    if (File.Exists(license_path))
+                    {
                         //Read JSON File
                         var jsonString = File.ReadAllText(license_path);
                         dynamic json_input = Newtonsoft.Json.JsonConvert.DeserializeObject(jsonString);
@@ -614,8 +625,10 @@ namespace BoonAmber.Api
                         this.server = profile["server"];
                         this.oauth_server = profile["oauth-server"];
                     }
-                } 
-            } catch (Exception) {
+                }
+            }
+            catch (Exception)
+            {
                 // Something went wrong trying to parse the file, continue
             }
 
@@ -630,7 +643,8 @@ namespace BoonAmber.Api
             this.oauth_server = string.IsNullOrEmpty(temp_oauth_server) ? this.oauth_server : temp_oauth_server;
 
             //fallback oauth server to main server
-            if (string.IsNullOrEmpty(this.oauth_server)){
+            if (string.IsNullOrEmpty(this.oauth_server))
+            {
                 this.oauth_server = this.server;
             }
 
@@ -638,9 +652,11 @@ namespace BoonAmber.Api
 
             //check verify environment variable
             string verify_str = Environment.GetEnvironmentVariable("AMBER_SSL_VERIFY");
-            if(!string.IsNullOrEmpty(verify_str)){
+            if (!string.IsNullOrEmpty(verify_str))
+            {
                 bool temp_verify = false;
-                if (bool.TryParse(verify_str, out temp_verify)){
+                if (bool.TryParse(verify_str, out temp_verify))
+                {
                     this.verify = temp_verify;
                 }
             }
@@ -648,13 +664,16 @@ namespace BoonAmber.Api
             //Console.WriteLine("Amber: username: {0} password: {1} server: {2} oauth_server: {3} verify: {4}", this.username, this.password, this.server, this.oauth_server, this.verify);
 
             // verify required profile elements have been created
-            if (this.username == "" ){
+            if (this.username == "")
+            {
                 throw new InvalidOperationException("username not specified");
             }
-            if (this.password == "" ){
+            if (this.password == "")
+            {
                 throw new InvalidOperationException("password not specified");
             }
-            if (this.server == "" ){
+            if (this.server == "")
+            {
                 throw new InvalidOperationException("server not specified");
             }
 

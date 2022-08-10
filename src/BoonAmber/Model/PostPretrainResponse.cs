@@ -128,22 +128,22 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.State == input.State ||
                     (this.State != null &&
                     this.State.Equals(input.State))
-                ) && 
+                ) &&
                 (
                     this.AmberTransaction == input.AmberTransaction ||
                     (this.AmberTransaction != null &&
                     this.AmberTransaction.Equals(input.AmberTransaction))
-                ) && 
+                ) &&
                 (
                     this.AmberChunk == input.AmberChunk ||
                     (this.AmberChunk != null &&
                     this.AmberChunk.Equals(input.AmberChunk))
-                ) && 
+                ) &&
                 (
                     this.Message == input.Message ||
                     (this.Message != null &&

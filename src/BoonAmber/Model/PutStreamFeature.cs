@@ -120,16 +120,16 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.Label == input.Label ||
                     (this.Label != null &&
                     this.Label.Equals(input.Label))
-                ) && 
+                ) &&
                 (
                     this.Value == input.Value ||
                     this.Value.Equals(input.Value)
-                ) && 
+                ) &&
                 (
                     this.Ts == input.Ts ||
                     (this.Ts != null &&

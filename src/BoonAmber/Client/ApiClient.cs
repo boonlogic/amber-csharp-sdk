@@ -165,7 +165,7 @@ namespace BoonAmber.Client
     {
         private readonly string _baseUrl;
         private readonly bool _verifySSL;
-        
+
         /// <summary>
         /// Specifies the settings on a <see cref="JsonSerializer" /> object.
         /// These settings can be adjusted to accommodate custom serialization rules.
@@ -440,7 +440,8 @@ namespace BoonAmber.Client
             var baseUrl = configuration.GetOperationServerUrl(options.Operation, options.OperationIndex) ?? _baseUrl;
 
             RestClient client = new RestClient(baseUrl);
-            if (!_verifySSL) {
+            if (!_verifySSL)
+            {
                 client.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
             }
 
@@ -510,7 +511,7 @@ namespace BoonAmber.Client
             {
                 try
                 {
-                    response.Data = (T) typeof(T).GetMethod("FromJson").Invoke(null, new object[] { response.Content });
+                    response.Data = (T)typeof(T).GetMethod("FromJson").Invoke(null, new object[] { response.Content });
                 }
                 catch (Exception ex)
                 {
@@ -569,7 +570,8 @@ namespace BoonAmber.Client
             var baseUrl = configuration.GetOperationServerUrl(options.Operation, options.OperationIndex) ?? _baseUrl;
 
             RestClient client = new RestClient(baseUrl);
-            if (!_verifySSL) {
+            if (!_verifySSL)
+            {
                 client.RemoteCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
             }
 
@@ -637,7 +639,7 @@ namespace BoonAmber.Client
             // if the response type is oneOf/anyOf, call FromJSON to deserialize the data
             if (typeof(BoonAmber.Model.AbstractOpenAPISchema).IsAssignableFrom(typeof(T)))
             {
-                response.Data = (T) typeof(T).GetMethod("FromJson").Invoke(null, new object[] { response.Content });
+                response.Data = (T)typeof(T).GetMethod("FromJson").Invoke(null, new object[] { response.Content });
             }
             else if (typeof(T).Name == "Stream") // for binary response
             {

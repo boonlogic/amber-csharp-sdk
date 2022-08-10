@@ -151,24 +151,24 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.MaxVal == input.MaxVal ||
                     this.MaxVal.Equals(input.MaxVal)
-                ) && 
+                ) &&
                 (
                     this.MinVal == input.MinVal ||
                     this.MinVal.Equals(input.MinVal)
-                ) && 
+                ) &&
                 (
                     this.Weight == input.Weight ||
                     this.Weight.Equals(input.Weight)
-                ) && 
+                ) &&
                 (
                     this.Label == input.Label ||
                     (this.Label != null &&
                     this.Label.Equals(input.Label))
-                ) && 
+                ) &&
                 (
                     this.SubmitRule == input.SubmitRule ||
                     this.SubmitRule.Equals(input.SubmitRule)

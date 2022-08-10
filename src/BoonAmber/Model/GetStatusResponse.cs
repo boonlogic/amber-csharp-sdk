@@ -212,49 +212,49 @@ namespace BoonAmber.Model
             {
                 return false;
             }
-            return 
+            return
                 (
                     this.Pca == input.Pca ||
                     (this.Pca != null &&
                     this.Pca.Equals(input.Pca))
-                ) && 
+                ) &&
                 (
                     this.ClusterGrowth == input.ClusterGrowth ||
                     (this.ClusterGrowth != null &&
                     this.ClusterGrowth.Equals(input.ClusterGrowth))
-                ) && 
+                ) &&
                 (
                     this.ClusterSizes == input.ClusterSizes ||
                     (this.ClusterSizes != null &&
                     this.ClusterSizes.Equals(input.ClusterSizes))
-                ) && 
+                ) &&
                 (
                     this.AnomalyIndexes == input.AnomalyIndexes ||
                     (this.AnomalyIndexes != null &&
                     this.AnomalyIndexes.Equals(input.AnomalyIndexes))
-                ) && 
+                ) &&
                 (
                     this.FrequencyIndexes == input.FrequencyIndexes ||
                     (this.FrequencyIndexes != null &&
                     this.FrequencyIndexes.Equals(input.FrequencyIndexes))
-                ) && 
+                ) &&
                 (
                     this.DistanceIndexes == input.DistanceIndexes ||
                     (this.DistanceIndexes != null &&
                     this.DistanceIndexes.Equals(input.DistanceIndexes))
-                ) && 
+                ) &&
                 (
                     this.TotalInferences == input.TotalInferences ||
                     this.TotalInferences.Equals(input.TotalInferences)
-                ) && 
+                ) &&
                 (
                     this.NumClusters == input.NumClusters ||
                     this.NumClusters.Equals(input.NumClusters)
-                ) && 
+                ) &&
                 (
                     this.AnomalyThreshold == input.AnomalyThreshold ||
                     this.AnomalyThreshold.Equals(input.AnomalyThreshold)
-                ) && 
+                ) &&
                 (
                     this.State == input.State ||
                     (this.State != null &&
