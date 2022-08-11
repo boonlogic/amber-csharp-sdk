@@ -593,6 +593,9 @@ namespace BoonAmber.Test.Api
             var post_pretrain_response = instance.PostPretrain(post_response.SensorId, post_pretrain_request);
 
             Assert.Equal("Pretrained", post_pretrain_response.State);
+            // TODO: add chunking test
+
+            // TODO: add test for cloud where it is not blocked
         }
 
         /// <summary>
@@ -849,8 +852,6 @@ namespace BoonAmber.Test.Api
             Assert.Throws<ApiException>(() => instance.GetRootCause(null, "1"));
         }
 
-        //TODO: post outage
-
         /// <summary>
         /// Test Post Outage 
         /// </summary>
@@ -904,8 +905,6 @@ namespace BoonAmber.Test.Api
             // test null sensor ID
             Assert.Throws<ApiException>(() => instance.PostOutage(null));
         }
-
-        //TODO: putstream
 
         /// <summary>
         /// Test PutStream
