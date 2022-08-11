@@ -11,6 +11,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Xunit;
 
 using BoonAmber.Client;
@@ -550,7 +551,7 @@ namespace BoonAmber.Test.Api
         }
 
         /// <summary>
-        /// Test Pretrain
+        /// Test Pretrain (get and post)
         /// </summary>
         [Fact]
         public void PostPretrainTest()
@@ -591,11 +592,19 @@ namespace BoonAmber.Test.Api
             var data_str = String.Join(",", data);
             var post_pretrain_request = new PostPretrainRequest(data: data_str);
             var post_pretrain_response = instance.PostPretrain(post_response.SensorId, post_pretrain_request);
+            Assert.IsType<PostPretrainResponse>(post_pretrain_response);
 
-            Assert.Equal("Pretrained", post_pretrain_response.State);
             // TODO: add chunking test
 
             // TODO: add test for cloud where it is not blocked
+            var get_pretrain_response = instance.GetPretrain(post_response.SensorId);
+            while (get_pretrain_response.State != "Pretrained")
+            {
+                Thread.Sleep(5000);
+                get_pretrain_response = instance.GetPretrain(post_response.SensorId);
+            }
+            Assert.Equal("Pretrained", get_pretrain_response.State);
+
         }
 
         /// <summary>
@@ -613,6 +622,8 @@ namespace BoonAmber.Test.Api
 
             // test null sensor ID
             Assert.Throws<ApiException>(() => instance.PostPretrain(null, post_pretrain_request));
+
+            Assert.Throws<ApiException>(() => instance.GetPretrain(null));
 
             // test null postPretrainRequest
             Assert.Throws<ApiException>(() => instance.PostPretrain("non-existent", null));
