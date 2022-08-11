@@ -903,6 +903,53 @@ namespace BoonAmber.Test.Api
         }
 
         //TODO: putstream
+        
+        /// <summary>
+        /// Test PutStream
+        /// </summary>
+        [Fact]
+        public void PutStreamTest()
+        {
+            //create sensor 
+            string label = "test_sensor_1";
+            var post_sensor_request = new PostSensorRequest(label);
+            var post_response = instance.PostSensor(post_sensor_request);
+            Assert.IsType<PostSensorResponse>(post_response);
+            Assert.False(string.IsNullOrEmpty(post_response.SensorId));
+        
+            // configure sensor with invalid feature count
+            List<FeatureConfig> features = new List<FeatureConfig>
+                { new FeatureConfig(50, 1, 1, "fancy-label-0", submitRule: FeatureConfig.SubmitRuleEnum.Submit) };
+
+            var post_config_request = new PostConfigRequest(anomalyHistoryWindow: 1000, 
+                learningRateNumerator: 10, 
+                learningRateDenominator: 10000, 
+                learningMaxClusters: 1000, 
+                learningMaxSamples: 10000000, 
+                featureCount: 1, 
+                streamingWindowSize: 25,
+                features: features, 
+                samplesToBuffer: 1000
+            );
+
+            //post a configuration
+            instance.PostConfig(post_response.SensorId, post_config_request);
+            
+            // read data file
+            var file_path = "../../../data.csv";
+            StreamReader reader = new StreamReader(file_path);
+            var line = reader.ReadLine();
+            var data = line.Split(",");
+            List<PutStreamFeature> put_stream_features = new List<PutStreamFeature> { new PutStreamFeature("fancy-label-0", Convert.ToSingle(data[0])) };
+            
+            var put_stream_request = new PutStreamRequest(put_stream_features, PutStreamRequest.SubmitRuleEnum.Submit);
+            var put_stream_response = instance.PutStream(post_response.SensorId, put_stream_request);
+            Assert.IsType<PutStreamResponse>(put_stream_response);
+
+            //delete sensor
+            var delete_response = instance.DeleteSensor(post_response.SensorId);
+            Assert.IsType<Error>(delete_response);
+        }
 
         /// <summary>
         /// Test Put stream negative
@@ -911,7 +958,7 @@ namespace BoonAmber.Test.Api
         public void PutStreamTestNegative()
         {
             // test null vector value
-            Assert.Throws<ApiException>(() => new PutStreamRequest(null, PutStreamRequest.SubmitRuleEnum.Submit));
+            Assert.Throws<ArgumentNullException>(() => new PutStreamRequest(null, PutStreamRequest.SubmitRuleEnum.Submit));
             
             // read data file
             var file_path = "../../../data.csv";
