@@ -67,6 +67,7 @@ test:
   tags:
     - expert-docker
   before_script:
+    - dotnet tool install --global dotnet-coverage
     - cd ci-root/packages/amber-cli/amber-cli
     - ./amber aop create-test-config --port 9876 > ${CI_PROJECT_DIR}/ci-root/packages/amber-csharp-sdk/amber-csharp-sdk/Amber.license
     - cd ${CI_PROJECT_DIR}/ci-root/packages/expert-server/expert-api
