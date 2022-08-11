@@ -5,13 +5,11 @@ Boon Logic Amber API Server
 Build Information:
 - API version: 1.0.3
 - SDK version: 1.0.0
-- Build package: io.swagger.codegen.v3.generators.dotnet.CSharpClientCodegen
+- Build package: openapi-generator-cli:v6.0.01
 
 ## Frameworks supported
-- .NET Core >=1.0
+- .NET Core >=6.0
 - .NET Framework >=4.5.2
-- Mono/Xamarin >=vNext
-- UWP >=10.0
 
 ## Dependencies
 - RestSharp >= 106.13.0
@@ -21,8 +19,10 @@ Build Information:
 - System.ComponentModel.Annotations >= 5.0.0
 
 ## Installation
-Generate the DLL using your preferred tool
-
+Install the package via Nuget:
+```
+dotnet add package BoonAmber --version 1.0.3
+```
 Then include the DLL (under the `bin` folder) in the C# project, and use the namespaces:
 ```csharp
 using BoonAmber.Api;
@@ -60,3 +60,4 @@ namespace Example
         }
     }
 }
+```
