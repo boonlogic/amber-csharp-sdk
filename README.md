@@ -1,3 +1,5 @@
+![Logo](https://github.com/boonlogic/amber-csharp-sdk/blob/master/docs/BoonLogic.png?raw=true)
+
 # BoonAmber - the C# library for the Amber API Server
 
 Boon Logic Amber API Server
