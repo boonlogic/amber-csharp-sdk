@@ -683,7 +683,7 @@ namespace BoonAmber.Test.Api
             {
                 fusion_features.Add(new FusionConfig("fancy-label-" + i.ToString(), FusionConfig.SubmitRuleEnum.Submit));
             }
-            StreamingParameters streaming = new StreamingParameters(10000, 10, 10000, 1000, 10000000);
+            LearningParameters streaming = new LearningParameters(10, 10000, 1000, 10000000);
 
             var put_config_request = new PutConfigRequest(features: fusion_features, streaming: streaming);
             var put_config_response = instance.PutConfig(post_response.SensorId, put_config_request);
@@ -701,7 +701,7 @@ namespace BoonAmber.Test.Api
         public void PutConfigTestNegative()
         {
             List<FusionConfig> fusion_features = new List<FusionConfig> { new FusionConfig("fancy-label", FusionConfig.SubmitRuleEnum.Submit) };
-            StreamingParameters streaming = new StreamingParameters(10000, 10, 10000, 1000, 10000000);
+            LearningParameters streaming = new LearningParameters(10, 10000, 1000, 10000000);
 
             var put_config_request = new PutConfigRequest(features: fusion_features, streaming: streaming);
 
@@ -734,7 +734,7 @@ namespace BoonAmber.Test.Api
             //Post it
             instance.PostConfig(post_response.SensorId, post_config_request);
 
-            streaming = new StreamingParameters(10000, 10, 10000, 1000, 10000000);
+            streaming = new LearningParameters(10, 10000, 1000, 10000000);
 
             put_config_request = new PutConfigRequest(features: fusion_features, streaming: streaming);
             // test enable learning fails while in buffering
