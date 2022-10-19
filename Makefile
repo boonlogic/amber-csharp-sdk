@@ -4,6 +4,16 @@
 TOP?=$(shell cd .. && git rev-parse --show-toplevel)
 -include $(TOP)/mk/base.mk
 
+#Find operating system
+UNAME_P := $(shell uname -p)
+ifeq ($(OS),Windows_NT)
+	detected_OS := Windows# Windows_NT on XP, 2000, 7, Vista, 10...
+else
+	detected_OS := $(shell uname)# same as "uname -s"
+endif
+$(info detected_OS is $(detected_OS))
+$(info architecture is $(UNAME_P))
+
 CWD  := $(shell pwd)
 AMBER_TEST_LICENSE_FILE?=$(CWD)/src/BoonAmber.Test/test.Amber.license
 PKG_VERSION ?= 1.0.0
@@ -13,8 +23,15 @@ default: build
 clean:
 	rm $(INSTALL_ROOT)/lib/*
 
+
+ifeq ($(detected_OS),Darwin)
+update_version:
+	@echo "Update Version"
+endif
+ifeq ($(detected_OS),Linux)
 update_version:
 	sed -i "s:<Version>.*</Version>:<Version>$(PKG_VERSION)</Version>:gi" src/BoonAmber/BoonAmber.csproj
+endif
 
 build: update_version
 	dotnet build src/BoonAmber/BoonAmber.csproj
