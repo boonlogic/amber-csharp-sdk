@@ -36,7 +36,7 @@ namespace BoonAmber.Model
         /// </summary>
         /// <param name="features">features.</param>
         /// <param name="streaming">streaming.</param>
-        public PutConfigRequest(List<FusionConfig> features = default(List<FusionConfig>), StreamingParameters streaming = default(StreamingParameters))
+        public PutConfigRequest(List<FusionConfig> features = default(List<FusionConfig>), LearningParameters streaming = default(LearningParameters))
         {
             this.Features = features;
             this.Streaming = streaming;
@@ -52,7 +52,7 @@ namespace BoonAmber.Model
         /// Gets or Sets Streaming
         /// </summary>
         [DataMember(Name = "streaming", EmitDefaultValue = false)]
-        public StreamingParameters Streaming { get; set; }
+        public LearningParameters Streaming { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object

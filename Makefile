@@ -52,7 +52,7 @@ test:
 	AMBER_TEST_LICENSE_FILE=$(AMBER_TEST_LICENSE_FILE) dotnet test src/BoonAmber.Test/BoonAmber.Test.csproj
 
 test-%:
-	AMBER_TEST_LICENSE_ID=$* AMBER_TEST_LICENSE_FILE=$(AMBER_TEST_LICENSE_FILE)  dotnet test src/BoonAmber.Test/BoonAmber.Test.csproj
+	AMBER_TEST_LICENSE_ID=$* AMBER_TEST_LICENSE_FILE=$(AMBER_TEST_LICENSE_FILE) dotnet test src/BoonAmber.Test/BoonAmber.Test.csproj
 
 run:
 	dotnet build src/examples/examples.csproj
