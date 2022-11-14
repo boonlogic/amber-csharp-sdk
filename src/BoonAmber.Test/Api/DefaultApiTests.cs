@@ -593,6 +593,7 @@ namespace BoonAmber.Test.Api
             var post_pretrain_request = new PostPretrainRequest(data: data_str);
             var post_pretrain_response = instance.PostPretrain(post_response.SensorId, post_pretrain_request);
             Assert.IsType<PostPretrainResponse>(post_pretrain_response);
+            Assert.True(post_pretrain_response.State == "Pretrained" || post_pretrain_response.State == "Pretraining");
 
             // TODO: add chunking test
 
@@ -674,8 +675,16 @@ namespace BoonAmber.Test.Api
             var data_str = String.Join(",", data);
             var post_pretrain_request = new PostPretrainRequest(data: data_str);
             var post_pretrain_response = instance.PostPretrain(post_response.SensorId, post_pretrain_request);
+            Assert.True(post_pretrain_response.State == "Pretrained" || post_pretrain_response.State == "Pretraining");
 
-            Assert.Equal("Pretrained", post_pretrain_response.State);
+            // wait for Pretrained state
+            var get_pretrain_response = instance.GetPretrain(post_response.SensorId);
+            while (get_pretrain_response.State != "Pretrained")
+            {
+                Thread.Sleep(5000);
+                get_pretrain_response = instance.GetPretrain(post_response.SensorId);
+            }
+            Assert.Equal("Pretrained", get_pretrain_response.State);
 
             // add on configuration fusion and streaming 
             List<FusionConfig> fusion_features = new List<FusionConfig>();
@@ -789,7 +798,15 @@ namespace BoonAmber.Test.Api
             var data_str = String.Join(",", data);
             var post_pretrain_request = new PostPretrainRequest(data: data_str);
             var post_pretrain_response = instance.PostPretrain(post_response.SensorId, post_pretrain_request);
+            Assert.True(post_pretrain_response.State == "Pretrained" || post_pretrain_response.State == "Pretraining");
 
+            // wait for Pretrained state
+            var get_pretrain_response = instance.GetPretrain(post_response.SensorId);
+            while (get_pretrain_response.State != "Pretrained")
+            {
+                Thread.Sleep(5000);
+                get_pretrain_response = instance.GetPretrain(post_response.SensorId);
+            }
             Assert.Equal("Pretrained", post_pretrain_response.State);
 
             var get_root_cause_response = instance.GetRootCause(post_response.SensorId, "[1]");
