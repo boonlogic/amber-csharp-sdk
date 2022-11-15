@@ -39,15 +39,25 @@ namespace BoonAmber.Model
         /// <summary>
         /// Initializes a new instance of the <see cref="PostStreamResponseAllOf" /> class.
         /// </summary>
+        /// <param name="iD">iD (required).</param>
         /// <param name="rI">rI (required).</param>
         /// <param name="sI">sI (required).</param>
         /// <param name="aD">aD (required).</param>
         /// <param name="aH">aH (required).</param>
         /// <param name="aM">aM (required).</param>
         /// <param name="aW">aW (required).</param>
-        /// <param name="iD">iD (required).</param>
-        public PostStreamResponseAllOf(Uint16Array rI = default(Uint16Array), Uint16Array sI = default(Uint16Array), Uint16Array aD = default(Uint16Array), Uint16Array aH = default(Uint16Array), Float32Array aM = default(Float32Array), Uint16Array aW = default(Uint16Array), Int32Array iD = default(Int32Array))
+        /// <param name="nI">nI (required).</param>
+        /// <param name="nS">nS (required).</param>
+        /// <param name="nW">nW (required).</param>
+        /// <param name="oM">oM (required).</param>
+        public PostStreamResponseAllOf(Int32Array iD = default(Int32Array), Uint16Array rI = default(Uint16Array), Uint16Array sI = default(Uint16Array), Uint16Array aD = default(Uint16Array), Uint16Array aH = default(Uint16Array), Float32Array aM = default(Float32Array), Uint16Array aW = default(Uint16Array), Uint16Array nI = default(Uint16Array), Uint16Array nS = default(Uint16Array), Float32Array nW = default(Float32Array), Float32Array oM = default(Float32Array))
         {
+            // to ensure "iD" is required (not null)
+            if (iD == null)
+            {
+                throw new ArgumentNullException("iD is a required property for PostStreamResponseAllOf and cannot be null");
+            }
+            this.ID = iD;
             // to ensure "rI" is required (not null)
             if (rI == null)
             {
@@ -84,13 +94,37 @@ namespace BoonAmber.Model
                 throw new ArgumentNullException("aW is a required property for PostStreamResponseAllOf and cannot be null");
             }
             this.AW = aW;
-            // to ensure "iD" is required (not null)
-            if (iD == null)
+            // to ensure "nI" is required (not null)
+            if (nI == null)
             {
-                throw new ArgumentNullException("iD is a required property for PostStreamResponseAllOf and cannot be null");
+                throw new ArgumentNullException("nI is a required property for PostStreamResponseAllOf and cannot be null");
             }
-            this.ID = iD;
+            this.NI = nI;
+            // to ensure "nS" is required (not null)
+            if (nS == null)
+            {
+                throw new ArgumentNullException("nS is a required property for PostStreamResponseAllOf and cannot be null");
+            }
+            this.NS = nS;
+            // to ensure "nW" is required (not null)
+            if (nW == null)
+            {
+                throw new ArgumentNullException("nW is a required property for PostStreamResponseAllOf and cannot be null");
+            }
+            this.NW = nW;
+            // to ensure "oM" is required (not null)
+            if (oM == null)
+            {
+                throw new ArgumentNullException("oM is a required property for PostStreamResponseAllOf and cannot be null");
+            }
+            this.OM = oM;
         }
+
+        /// <summary>
+        /// Gets or Sets ID
+        /// </summary>
+        [DataMember(Name = "ID", IsRequired = true, EmitDefaultValue = false)]
+        public Int32Array ID { get; set; }
 
         /// <summary>
         /// Gets or Sets RI
@@ -129,10 +163,28 @@ namespace BoonAmber.Model
         public Uint16Array AW { get; set; }
 
         /// <summary>
-        /// Gets or Sets ID
+        /// Gets or Sets NI
         /// </summary>
-        [DataMember(Name = "ID", IsRequired = true, EmitDefaultValue = false)]
-        public Int32Array ID { get; set; }
+        [DataMember(Name = "NI", IsRequired = true, EmitDefaultValue = false)]
+        public Uint16Array NI { get; set; }
+
+        /// <summary>
+        /// Gets or Sets NS
+        /// </summary>
+        [DataMember(Name = "NS", IsRequired = true, EmitDefaultValue = false)]
+        public Uint16Array NS { get; set; }
+
+        /// <summary>
+        /// Gets or Sets NW
+        /// </summary>
+        [DataMember(Name = "NW", IsRequired = true, EmitDefaultValue = false)]
+        public Float32Array NW { get; set; }
+
+        /// <summary>
+        /// Gets or Sets OM
+        /// </summary>
+        [DataMember(Name = "OM", IsRequired = true, EmitDefaultValue = false)]
+        public Float32Array OM { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -142,13 +194,17 @@ namespace BoonAmber.Model
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("class PostStreamResponseAllOf {\n");
+            sb.Append("  ID: ").Append(ID).Append("\n");
             sb.Append("  RI: ").Append(RI).Append("\n");
             sb.Append("  SI: ").Append(SI).Append("\n");
             sb.Append("  AD: ").Append(AD).Append("\n");
             sb.Append("  AH: ").Append(AH).Append("\n");
             sb.Append("  AM: ").Append(AM).Append("\n");
             sb.Append("  AW: ").Append(AW).Append("\n");
-            sb.Append("  ID: ").Append(ID).Append("\n");
+            sb.Append("  NI: ").Append(NI).Append("\n");
+            sb.Append("  NS: ").Append(NS).Append("\n");
+            sb.Append("  NW: ").Append(NW).Append("\n");
+            sb.Append("  OM: ").Append(OM).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -185,6 +241,11 @@ namespace BoonAmber.Model
             }
             return
                 (
+                    this.ID == input.ID ||
+                    (this.ID != null &&
+                    this.ID.Equals(input.ID))
+                ) &&
+                (
                     this.RI == input.RI ||
                     (this.RI != null &&
                     this.RI.Equals(input.RI))
@@ -215,9 +276,24 @@ namespace BoonAmber.Model
                     this.AW.Equals(input.AW))
                 ) &&
                 (
-                    this.ID == input.ID ||
-                    (this.ID != null &&
-                    this.ID.Equals(input.ID))
+                    this.NI == input.NI ||
+                    (this.NI != null &&
+                    this.NI.Equals(input.NI))
+                ) &&
+                (
+                    this.NS == input.NS ||
+                    (this.NS != null &&
+                    this.NS.Equals(input.NS))
+                ) &&
+                (
+                    this.NW == input.NW ||
+                    (this.NW != null &&
+                    this.NW.Equals(input.NW))
+                ) &&
+                (
+                    this.OM == input.OM ||
+                    (this.OM != null &&
+                    this.OM.Equals(input.OM))
                 );
         }
 
@@ -230,6 +306,10 @@ namespace BoonAmber.Model
             unchecked // Overflow is fine, just wrap
             {
                 int hashCode = 41;
+                if (this.ID != null)
+                {
+                    hashCode = (hashCode * 59) + this.ID.GetHashCode();
+                }
                 if (this.RI != null)
                 {
                     hashCode = (hashCode * 59) + this.RI.GetHashCode();
@@ -254,9 +334,21 @@ namespace BoonAmber.Model
                 {
                     hashCode = (hashCode * 59) + this.AW.GetHashCode();
                 }
-                if (this.ID != null)
+                if (this.NI != null)
                 {
-                    hashCode = (hashCode * 59) + this.ID.GetHashCode();
+                    hashCode = (hashCode * 59) + this.NI.GetHashCode();
+                }
+                if (this.NS != null)
+                {
+                    hashCode = (hashCode * 59) + this.NS.GetHashCode();
+                }
+                if (this.NW != null)
+                {
+                    hashCode = (hashCode * 59) + this.NW.GetHashCode();
+                }
+                if (this.OM != null)
+                {
+                    hashCode = (hashCode * 59) + this.OM.GetHashCode();
                 }
                 return hashCode;
             }

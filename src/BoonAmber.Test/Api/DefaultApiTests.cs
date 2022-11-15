@@ -458,6 +458,10 @@ namespace BoonAmber.Test.Api
             Assert.Equal(0, post_stream_response.AM[0]);
             Assert.Equal(0, post_stream_response.AW[0]);
             Assert.Equal(0, post_stream_response.ID[0]);
+            Assert.Equal(0, post_stream_response.NI[0]);
+            Assert.Equal(0, post_stream_response.NS[0]);
+            Assert.Equal(0, post_stream_response.NW[0]);
+            Assert.Equal(0, post_stream_response.OM[0]);
             Assert.False(string.IsNullOrEmpty(post_stream_response.State));
 
             //delete sensor
@@ -530,6 +534,10 @@ namespace BoonAmber.Test.Api
             Assert.Equal(0, post_stream_response.AM[0]);
             Assert.Equal(0, post_stream_response.AW[0]);
             Assert.Equal(0, post_stream_response.ID[0]);
+            Assert.Equal(0, post_stream_response.NI[0]);
+            Assert.Equal(0, post_stream_response.NS[0]);
+            Assert.Equal(0, post_stream_response.NW[0]);
+            Assert.Equal(0, post_stream_response.OM[0]);
             Assert.False(string.IsNullOrEmpty(post_stream_response.State));
 
             var summary = instance.GetAmberSummary(post_response.SensorId);
