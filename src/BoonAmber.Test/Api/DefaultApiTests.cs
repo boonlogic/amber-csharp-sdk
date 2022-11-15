@@ -13,10 +13,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Xunit;
-
 using BoonAmber.Client;
 using BoonAmber.Api;
 using BoonAmber.Model;
+
 // ReSharper disable AssignNullToNotNullAttribute
 
 namespace BoonAmber.Test.Api
@@ -45,6 +45,7 @@ namespace BoonAmber.Test.Api
             {
                 amber_license_file = "../test.Amber.license";
             }
+
             if (string.IsNullOrEmpty(amber_license_id))
             {
                 amber_license_id = "default";
@@ -146,7 +147,6 @@ namespace BoonAmber.Test.Api
             var instance4 = new DefaultApi("garbage", amber_license_file);
             var body4 = new PostAuth2Request(instance4.username, instance4.password);
             Assert.Throws<ApiException>(() => instance4.PostOauth2(body4));
-
         }
 
         /// <summary>
@@ -164,7 +164,6 @@ namespace BoonAmber.Test.Api
             //delete sensor
             var delete_response = instance.DeleteSensor(post_response.SensorId);
             Assert.IsType<Error>(delete_response);
-
         }
 
         /// <summary>
@@ -177,7 +176,6 @@ namespace BoonAmber.Test.Api
             Assert.Throws<ApiException>(() => instance.PostSensor(null));
 
             Assert.Throws<ApiException>(() => instance.DeleteSensor(null));
-
         }
 
         /// <summary>
@@ -201,7 +199,7 @@ namespace BoonAmber.Test.Api
             Assert.Equal(newlabel, put_response.Label);
 
             //delete sensor
-            var delete_response = instance.DeleteSensor(put_response.SensorId);
+            var delete_response = instance.DeleteSensor(post_response.SensorId);
             Assert.IsType<Error>(delete_response);
         }
 
@@ -244,7 +242,7 @@ namespace BoonAmber.Test.Api
             Assert.Equal(label, get_response.Label);
 
             //delete sensor
-            var delete_response = instance.DeleteSensor(get_response.SensorId);
+            var delete_response = instance.DeleteSensor(post_response.SensorId);
             Assert.IsType<Error>(delete_response);
         }
 
@@ -259,7 +257,6 @@ namespace BoonAmber.Test.Api
 
             // test null sensor ID
             Assert.Throws<ApiException>(() => instance.GetSensor(null));
-
         }
 
         /// <summary>
@@ -270,14 +267,15 @@ namespace BoonAmber.Test.Api
         {
             //create sensors
             string[] labels = { "test_sensor_1", "test_sensor_2", "test_sensor_3" };
+            string[] sensors_created = { };
             foreach (string label in labels)
             {
                 var post_sensor_request = new PostSensorRequest(label);
                 var post_response = instance.PostSensor(post_sensor_request);
                 Assert.IsType<PostSensorResponse>(post_response);
                 Assert.False(string.IsNullOrEmpty(post_response.SensorId));
+                sensors_created.Append(post_response.SensorId);
             }
-
 
             //get sensor 
             var get_response = instance.GetSensors();
@@ -285,9 +283,9 @@ namespace BoonAmber.Test.Api
             Assert.True(get_response.Count >= 3, "Expected #sensors to be greater than or euqal to 3.");
 
             //delete sensor
-            foreach (SensorInstance sensor in get_response)
+            foreach (string sensor_id in sensors_created)
             {
-                var delete_response = instance.DeleteSensor(sensor.SensorId);
+                var delete_response = instance.DeleteSensor(sensor_id);
                 Assert.IsType<Error>(delete_response);
             }
         }
@@ -306,19 +304,20 @@ namespace BoonAmber.Test.Api
             Assert.False(string.IsNullOrEmpty(post_response.SensorId));
 
             // configure sensor with custom features
-            List<FeatureConfig> features = new List<FeatureConfig> { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
+            List<FeatureConfig> features = new List<FeatureConfig>
+                { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
 
 
             var post_config_request = new PostConfigRequest(anomalyHistoryWindow: 1000,
-                                                    learningRateNumerator: 10,
-                                                    learningRateDenominator: 10000,
-                                                    learningMaxClusters: 1000,
-                                                    learningMaxSamples: 10000000,
-                                                    featureCount: 1,
-                                                    streamingWindowSize: 25,
-                                                    features: features,
-                                                    samplesToBuffer: 1000
-                                                );
+                learningRateNumerator: 10,
+                learningRateDenominator: 10000,
+                learningMaxClusters: 1000,
+                learningMaxSamples: 10000000,
+                featureCount: 1,
+                streamingWindowSize: 25,
+                features: features,
+                samplesToBuffer: 1000
+            );
 
             //Post it
             var config_response = instance.PostConfig(post_response.SensorId, post_config_request);
@@ -362,19 +361,20 @@ namespace BoonAmber.Test.Api
             Assert.False(string.IsNullOrEmpty(post_response.SensorId));
 
             // configure sensor with invalid feature count
-            List<FeatureConfig> features = new List<FeatureConfig> { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
+            List<FeatureConfig> features = new List<FeatureConfig>
+                { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
 
 
             var post_config_request = new PostConfigRequest(anomalyHistoryWindow: 1000,
-                                                    learningRateNumerator: 10,
-                                                    learningRateDenominator: 10000,
-                                                    learningMaxClusters: 1000,
-                                                    learningMaxSamples: 10000000,
-                                                    featureCount: -1,
-                                                    streamingWindowSize: 25,
-                                                    features: features,
-                                                    samplesToBuffer: 1000
-                                                );
+                learningRateNumerator: 10,
+                learningRateDenominator: 10000,
+                learningMaxClusters: 1000,
+                learningMaxSamples: 10000000,
+                featureCount: -1,
+                streamingWindowSize: 25,
+                features: features,
+                samplesToBuffer: 1000
+            );
             //test bad feature count
             Assert.Throws<ApiException>(() => instance.PostConfig(post_response.SensorId, post_config_request));
 
@@ -411,7 +411,6 @@ namespace BoonAmber.Test.Api
 
             // test null sensor ID
             Assert.Throws<ApiException>(() => instance.GetConfig(null));
-
         }
 
 
@@ -427,19 +426,20 @@ namespace BoonAmber.Test.Api
             var post_response = instance.PostSensor(post_sensor_request);
 
             // configure sensor with invalid feature count
-            List<FeatureConfig> features = new List<FeatureConfig> { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
+            List<FeatureConfig> features = new List<FeatureConfig>
+                { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
 
 
             var post_config_request = new PostConfigRequest(anomalyHistoryWindow: 1000,
-                                                    learningRateNumerator: 10,
-                                                    learningRateDenominator: 10000,
-                                                    learningMaxClusters: 1000,
-                                                    learningMaxSamples: 10000000,
-                                                    featureCount: 1,
-                                                    streamingWindowSize: 25,
-                                                    features: features,
-                                                    samplesToBuffer: 1000
-                                                );
+                learningRateNumerator: 10,
+                learningRateDenominator: 10000,
+                learningMaxClusters: 1000,
+                learningMaxSamples: 10000000,
+                featureCount: 1,
+                streamingWindowSize: 25,
+                features: features,
+                samplesToBuffer: 1000
+            );
 
             //post a configuration
             instance.PostConfig(post_response.SensorId, post_config_request);
@@ -483,7 +483,6 @@ namespace BoonAmber.Test.Api
 
             // test null postStreamRequest
             Assert.Throws<ApiException>(() => instance.PostStream("non-existant-sensor-id", null));
-
         }
 
         /// <summary>
@@ -498,19 +497,20 @@ namespace BoonAmber.Test.Api
             var post_response = instance.PostSensor(post_sensor_request);
 
             // configure sensor with invalid feature count
-            List<FeatureConfig> features = new List<FeatureConfig> { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
+            List<FeatureConfig> features = new List<FeatureConfig>
+                { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
 
 
             var post_config_request = new PostConfigRequest(anomalyHistoryWindow: 1000,
-                                                    learningRateNumerator: 10,
-                                                    learningRateDenominator: 10000,
-                                                    learningMaxClusters: 1000,
-                                                    learningMaxSamples: 10000000,
-                                                    featureCount: 1,
-                                                    streamingWindowSize: 25,
-                                                    features: features,
-                                                    samplesToBuffer: 1000
-                                                );
+                learningRateNumerator: 10,
+                learningRateDenominator: 10000,
+                learningMaxClusters: 1000,
+                learningMaxSamples: 10000000,
+                featureCount: 1,
+                streamingWindowSize: 25,
+                features: features,
+                samplesToBuffer: 1000
+            );
 
             //post a configuration
             instance.PostConfig(post_response.SensorId, post_config_request);
@@ -562,90 +562,8 @@ namespace BoonAmber.Test.Api
             var post_response = instance.PostSensor(post_sensor_request);
 
             // configure sensor with invalid feature count
-            List<FeatureConfig> features = Enumerable.Repeat(new FeatureConfig(50, 1, 1, submitRule: FeatureConfig.SubmitRuleEnum.Submit),
-                                         201).ToList();
-
-            var post_config_request = new PostConfigRequest(anomalyHistoryWindow: 1000,
-                learningRateNumerator: 10,
-                learningRateDenominator: 10000,
-                learningMaxClusters: 1000,
-                learningMaxSamples: 10000000,
-                featureCount: 201,
-                streamingWindowSize: 25,
-                features: features,
-                samplesToBuffer: 1000
-            );
-
-            //post a configuration
-            instance.PostConfig(post_response.SensorId, post_config_request);
-
-            // read data file
-            var file_path = "../../../data.csv";
-            StreamReader reader = new StreamReader(file_path);
-            List<string> data = new List<string>();
-            while (!reader.EndOfStream)
-            {
-                var line = reader.ReadLine();
-                data.Add(line);
-            }
-
-            var data_str = String.Join(",", data);
-            var post_pretrain_request = new PostPretrainRequest(data: data_str);
-            var post_pretrain_response = instance.PostPretrain(post_response.SensorId, post_pretrain_request);
-            Assert.IsType<PostPretrainResponse>(post_pretrain_response);
-            Assert.True(post_pretrain_response.State == "Pretrained" || post_pretrain_response.State == "Pretraining");
-
-            // TODO: add chunking test
-
-            // TODO: add test for cloud where it is not blocked
-            var get_pretrain_response = instance.GetPretrain(post_response.SensorId);
-            while (get_pretrain_response.State != "Pretrained")
-            {
-                Thread.Sleep(5000);
-                get_pretrain_response = instance.GetPretrain(post_response.SensorId);
-            }
-            Assert.Equal("Pretrained", get_pretrain_response.State);
-
-        }
-
-        /// <summary>
-        /// Test Pretrain negative
-        /// </summary>
-        [Fact]
-        public void PostPretrainTestNegative()
-        {
-            float[] data =
-            {
-                1f, 2f, 3f, 4f, 5f
-            };
-            var data_str = String.Join(",", data);
-            var post_pretrain_request = new PostPretrainRequest(data: data_str);
-
-            // test null sensor ID
-            Assert.Throws<ApiException>(() => instance.PostPretrain(null, post_pretrain_request));
-
-            Assert.Throws<ApiException>(() => instance.GetPretrain(null));
-
-            // test null postPretrainRequest
-            Assert.Throws<ApiException>(() => instance.PostPretrain("non-existent", null));
-
-        }
-
-        /// <summary>
-        /// Test PutConfig
-        /// </summary>
-        [Fact]
-        public void PutConfigTest()
-        {
-            //create sensor 
-            string label = "test_sensor_1";
-            var post_sensor_request = new PostSensorRequest(label);
-            var post_response = instance.PostSensor(post_sensor_request);
-            Assert.IsType<PostSensorResponse>(post_response);
-            Assert.False(string.IsNullOrEmpty(post_response.SensorId));
-
-            // configure sensor with invalid feature count
-            List<FeatureConfig> features = Enumerable.Repeat(new FeatureConfig(50, 1, 1, submitRule: FeatureConfig.SubmitRuleEnum.Submit),
+            List<FeatureConfig> features = Enumerable.Repeat(
+                new FeatureConfig(50, 1, 1, submitRule: FeatureConfig.SubmitRuleEnum.Submit),
                 201).ToList();
 
             var post_config_request = new PostConfigRequest(anomalyHistoryWindow: 1000,
@@ -675,23 +593,113 @@ namespace BoonAmber.Test.Api
             var data_str = String.Join(",", data);
             var post_pretrain_request = new PostPretrainRequest(data: data_str);
             var post_pretrain_response = instance.PostPretrain(post_response.SensorId, post_pretrain_request);
-            Assert.True(post_pretrain_response.State == "Pretrained" || post_pretrain_response.State == "Pretraining");
+            Assert.IsType<PostPretrainResponse>(post_pretrain_response);
+            Assert.True(post_pretrain_response.State == "Pretrained" | post_pretrain_response.State == "Pretraining");
 
-            // wait for Pretrained state
+            // TODO: add chunking test
+
+            // TODO: add test for cloud where it is not blocked
             var get_pretrain_response = instance.GetPretrain(post_response.SensorId);
-            while (get_pretrain_response.State != "Pretrained")
+            var retry = 0;
+            while (get_pretrain_response.State != "Pretrained" & retry < 24)
             {
                 Thread.Sleep(5000);
                 get_pretrain_response = instance.GetPretrain(post_response.SensorId);
+                retry++;
             }
+
+            Assert.Equal("Pretrained", get_pretrain_response.State);
+        }
+
+        /// <summary>
+        /// Test Pretrain negative
+        /// </summary>
+        [Fact]
+        public void PostPretrainTestNegative()
+        {
+            float[] data =
+            {
+                1f, 2f, 3f, 4f, 5f
+            };
+            var data_str = String.Join(",", data);
+            var post_pretrain_request = new PostPretrainRequest(data: data_str);
+
+            // test null sensor ID
+            Assert.Throws<ApiException>(() => instance.PostPretrain(null, post_pretrain_request));
+
+            Assert.Throws<ApiException>(() => instance.GetPretrain(null));
+
+            // test null postPretrainRequest
+            Assert.Throws<ApiException>(() => instance.PostPretrain("non-existent", null));
+        }
+
+        /// <summary>
+        /// Test PutConfig
+        /// </summary>
+        [Fact]
+        public void PutConfigTest()
+        {
+            //create sensor 
+            string label = "test_sensor_1";
+            var post_sensor_request = new PostSensorRequest(label);
+            var post_response = instance.PostSensor(post_sensor_request);
+            Assert.IsType<PostSensorResponse>(post_response);
+            Assert.False(string.IsNullOrEmpty(post_response.SensorId));
+
+            // configure sensor with invalid feature count
+            List<FeatureConfig> features = Enumerable.Repeat(
+                new FeatureConfig(50, 1, 1, submitRule: FeatureConfig.SubmitRuleEnum.Submit),
+                201).ToList();
+
+            var post_config_request = new PostConfigRequest(anomalyHistoryWindow: 1000,
+                learningRateNumerator: 10,
+                learningRateDenominator: 10000,
+                learningMaxClusters: 1000,
+                learningMaxSamples: 10000000,
+                featureCount: 201,
+                streamingWindowSize: 25,
+                features: features,
+                samplesToBuffer: 1000
+            );
+
+            //post a configuration
+            instance.PostConfig(post_response.SensorId, post_config_request);
+
+            // read data file
+            var file_path = "../../../data.csv";
+            StreamReader reader = new StreamReader(file_path);
+            List<string> data = new List<string>();
+            while (!reader.EndOfStream)
+            {
+                var line = reader.ReadLine();
+                data.Add(line);
+            }
+
+            var data_str = String.Join(",", data);
+            var post_pretrain_request = new PostPretrainRequest(data: data_str);
+            var post_pretrain_response = instance.PostPretrain(post_response.SensorId, post_pretrain_request);
+            Assert.True(post_pretrain_response.State == "Pretrained" | post_pretrain_response.State == "Pretraining");
+
+            // wait for Pretrained state
+            var get_pretrain_response = instance.GetPretrain(post_response.SensorId);
+            var retry = 0;
+            while (get_pretrain_response.State != "Pretrained" & retry < 24)
+            {
+                Thread.Sleep(5000);
+                get_pretrain_response = instance.GetPretrain(post_response.SensorId);
+                retry++;
+            }
+
             Assert.Equal("Pretrained", get_pretrain_response.State);
 
             // add on configuration fusion and streaming 
             List<FusionConfig> fusion_features = new List<FusionConfig>();
             for (int i = 0; i < 201; i++)
             {
-                fusion_features.Add(new FusionConfig("fancy-label-" + i.ToString(), FusionConfig.SubmitRuleEnum.Submit));
+                fusion_features.Add(new FusionConfig("fancy-label-" + i.ToString(),
+                    FusionConfig.SubmitRuleEnum.Submit));
             }
+
             LearningParameters streaming = new LearningParameters(10, 10000, 1000, 10000000);
 
             var put_config_request = new PutConfigRequest(features: fusion_features, streaming: streaming);
@@ -709,7 +717,8 @@ namespace BoonAmber.Test.Api
         [Fact]
         public void PutConfigTestNegative()
         {
-            List<FusionConfig> fusion_features = new List<FusionConfig> { new FusionConfig("fancy-label", FusionConfig.SubmitRuleEnum.Submit) };
+            List<FusionConfig> fusion_features = new List<FusionConfig>
+                { new FusionConfig("fancy-label", FusionConfig.SubmitRuleEnum.Submit) };
             LearningParameters streaming = new LearningParameters(10, 10000, 1000, 10000000);
 
             var put_config_request = new PutConfigRequest(features: fusion_features, streaming: streaming);
@@ -727,7 +736,8 @@ namespace BoonAmber.Test.Api
             Assert.False(string.IsNullOrEmpty(post_response.SensorId));
 
             // configure sensor with custom features
-            List<FeatureConfig> features = new List<FeatureConfig> { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
+            List<FeatureConfig> features = new List<FeatureConfig>
+                { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
 
             var post_config_request = new PostConfigRequest(anomalyHistoryWindow: 1000,
                 learningRateNumerator: 10,
@@ -768,7 +778,8 @@ namespace BoonAmber.Test.Api
             Assert.False(string.IsNullOrEmpty(post_response.SensorId));
 
             // configure sensor with invalid feature count
-            List<FeatureConfig> features = Enumerable.Repeat(new FeatureConfig(50, 1, 1, submitRule: FeatureConfig.SubmitRuleEnum.Submit),
+            List<FeatureConfig> features = Enumerable.Repeat(
+                new FeatureConfig(50, 1, 1, submitRule: FeatureConfig.SubmitRuleEnum.Submit),
                 201).ToList();
 
             var post_config_request = new PostConfigRequest(anomalyHistoryWindow: 1000,
@@ -798,16 +809,19 @@ namespace BoonAmber.Test.Api
             var data_str = String.Join(",", data);
             var post_pretrain_request = new PostPretrainRequest(data: data_str);
             var post_pretrain_response = instance.PostPretrain(post_response.SensorId, post_pretrain_request);
-            Assert.True(post_pretrain_response.State == "Pretrained" || post_pretrain_response.State == "Pretraining");
+            Assert.True(post_pretrain_response.State == "Pretrained" | post_pretrain_response.State == "Pretraining");
 
             // wait for Pretrained state
             var get_pretrain_response = instance.GetPretrain(post_response.SensorId);
-            while (get_pretrain_response.State != "Pretrained")
+            var retry = 0;
+            while (get_pretrain_response.State != "Pretrained" & retry < 24)
             {
                 Thread.Sleep(5000);
                 get_pretrain_response = instance.GetPretrain(post_response.SensorId);
+                retry++;
             }
-            Assert.Equal("Pretrained", post_pretrain_response.State);
+
+            Assert.Equal("Pretrained", get_pretrain_response.State);
 
             var get_root_cause_response = instance.GetRootCause(post_response.SensorId, "[1]");
             Assert.IsType<GetRootCauseResponse>(get_root_cause_response);
@@ -838,19 +852,20 @@ namespace BoonAmber.Test.Api
             var post_response = instance.PostSensor(post_sensor_request);
 
             // configure sensor with invalid feature count
-            List<FeatureConfig> features = new List<FeatureConfig> { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
+            List<FeatureConfig> features = new List<FeatureConfig>
+                { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
 
 
             var post_config_request = new PostConfigRequest(anomalyHistoryWindow: 1000,
-                                                    learningRateNumerator: 10,
-                                                    learningRateDenominator: 10000,
-                                                    learningMaxClusters: 1000,
-                                                    learningMaxSamples: 10000000,
-                                                    featureCount: 1,
-                                                    streamingWindowSize: 25,
-                                                    features: features,
-                                                    samplesToBuffer: 1000
-                                                );
+                learningRateNumerator: 10,
+                learningRateDenominator: 10000,
+                learningMaxClusters: 1000,
+                learningMaxSamples: 10000000,
+                featureCount: 1,
+                streamingWindowSize: 25,
+                features: features,
+                samplesToBuffer: 1000
+            );
 
             //post a configuration
             instance.PostConfig(post_response.SensorId, post_config_request);
@@ -892,18 +907,19 @@ namespace BoonAmber.Test.Api
             var post_response = instance.PostSensor(post_sensor_request);
 
             // configure sensor with invalid feature count
-            List<FeatureConfig> features = new List<FeatureConfig> { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
+            List<FeatureConfig> features = new List<FeatureConfig>
+                { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
 
             var post_config_request = new PostConfigRequest(anomalyHistoryWindow: 1000,
-                                                    learningRateNumerator: 10,
-                                                    learningRateDenominator: 10000,
-                                                    learningMaxClusters: 1000,
-                                                    learningMaxSamples: 10000000,
-                                                    featureCount: 1,
-                                                    streamingWindowSize: 25,
-                                                    features: features,
-                                                    samplesToBuffer: 1000
-                                                );
+                learningRateNumerator: 10,
+                learningRateDenominator: 10000,
+                learningMaxClusters: 1000,
+                learningMaxSamples: 10000000,
+                featureCount: 1,
+                streamingWindowSize: 25,
+                features: features,
+                samplesToBuffer: 1000
+            );
 
             //post a configuration
             instance.PostConfig(post_response.SensorId, post_config_request);
@@ -970,7 +986,8 @@ namespace BoonAmber.Test.Api
             StreamReader reader = new StreamReader(file_path);
             var line = reader.ReadLine();
             var data = line.Split(",");
-            List<PutStreamFeature> put_stream_features = new List<PutStreamFeature> { new PutStreamFeature("fancy-label-0", Convert.ToSingle(data[0])) };
+            List<PutStreamFeature> put_stream_features = new List<PutStreamFeature>
+                { new PutStreamFeature("fancy-label-0", Convert.ToSingle(data[0])) };
 
             var put_stream_request = new PutStreamRequest(put_stream_features, PutStreamRequest.SubmitRuleEnum.Submit);
             var put_stream_response = instance.PutStream(post_response.SensorId, put_stream_request);
@@ -988,7 +1005,8 @@ namespace BoonAmber.Test.Api
         public void PutStreamTestNegative()
         {
             // test null vector value
-            Assert.Throws<ArgumentNullException>(() => new PutStreamRequest(null, PutStreamRequest.SubmitRuleEnum.Submit));
+            Assert.Throws<ArgumentNullException>(() =>
+                new PutStreamRequest(null, PutStreamRequest.SubmitRuleEnum.Submit));
 
             // read data file
             var file_path = "../../../data.csv";
@@ -1000,6 +1018,7 @@ namespace BoonAmber.Test.Api
             {
                 put_stream_features.Add(new PutStreamFeature("fancy-label-" + i, Convert.ToSingle(data[i])));
             }
+
             var put_stream_request = new PutStreamRequest(put_stream_features, PutStreamRequest.SubmitRuleEnum.Submit);
 
             // test null sensor ID
@@ -1008,7 +1027,5 @@ namespace BoonAmber.Test.Api
             //test null putStreamRequest
             Assert.Throws<ApiException>(() => instance.PutStream("non-existent", null));
         }
-
     }
-
 }
