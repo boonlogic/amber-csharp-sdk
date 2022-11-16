@@ -307,7 +307,6 @@ namespace BoonAmber.Test.Api
             List<FeatureConfig> features = new List<FeatureConfig>
                 { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
 
-
             var post_config_request = new PostConfigRequest(anomalyHistoryWindow: 1000,
                 learningRateNumerator: 10,
                 learningRateDenominator: 10000,
@@ -363,7 +362,6 @@ namespace BoonAmber.Test.Api
             // configure sensor with invalid feature count
             List<FeatureConfig> features = new List<FeatureConfig>
                 { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
-
 
             var post_config_request = new PostConfigRequest(anomalyHistoryWindow: 1000,
                 learningRateNumerator: 10,
@@ -425,18 +423,17 @@ namespace BoonAmber.Test.Api
             var post_sensor_request = new PostSensorRequest(label);
             var post_response = instance.PostSensor(post_sensor_request);
 
-            // configure sensor with invalid feature count
-            List<FeatureConfig> features = new List<FeatureConfig>
-                { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
-
+            // configure sensor with 4 features
+            List<FeatureConfig> features = Enumerable.Repeat(
+                new FeatureConfig(50, 1, 1, submitRule: FeatureConfig.SubmitRuleEnum.Submit), 4).ToList();
 
             var post_config_request = new PostConfigRequest(anomalyHistoryWindow: 1000,
                 learningRateNumerator: 10,
                 learningRateDenominator: 10000,
                 learningMaxClusters: 1000,
                 learningMaxSamples: 10000000,
-                featureCount: 1,
-                streamingWindowSize: 25,
+                featureCount: 4,
+                streamingWindowSize: 1,
                 features: features,
                 samplesToBuffer: 1000
             );
@@ -500,10 +497,9 @@ namespace BoonAmber.Test.Api
             var post_sensor_request = new PostSensorRequest(label);
             var post_response = instance.PostSensor(post_sensor_request);
 
-            // configure sensor with invalid feature count
+            // configure sensor
             List<FeatureConfig> features = new List<FeatureConfig>
                 { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
-
 
             var post_config_request = new PostConfigRequest(anomalyHistoryWindow: 1000,
                 learningRateNumerator: 10,
@@ -518,7 +514,6 @@ namespace BoonAmber.Test.Api
 
             //post a configuration
             instance.PostConfig(post_response.SensorId, post_config_request);
-
 
             //stream data
             float[] data = { 1.0f, 2.0f, 3.0f, 4.0f };
@@ -569,7 +564,7 @@ namespace BoonAmber.Test.Api
             var post_sensor_request = new PostSensorRequest(label);
             var post_response = instance.PostSensor(post_sensor_request);
 
-            // configure sensor with invalid feature count
+            // configure sensor
             List<FeatureConfig> features = Enumerable.Repeat(
                 new FeatureConfig(50, 1, 1, submitRule: FeatureConfig.SubmitRuleEnum.Submit),
                 201).ToList();
@@ -580,7 +575,7 @@ namespace BoonAmber.Test.Api
                 learningMaxClusters: 1000,
                 learningMaxSamples: 10000000,
                 featureCount: 201,
-                streamingWindowSize: 25,
+                streamingWindowSize: 1,
                 features: features,
                 samplesToBuffer: 1000
             );
@@ -665,7 +660,7 @@ namespace BoonAmber.Test.Api
                 learningMaxClusters: 1000,
                 learningMaxSamples: 10000000,
                 featureCount: 201,
-                streamingWindowSize: 25,
+                streamingWindowSize: 1,
                 features: features,
                 samplesToBuffer: 1000
             );
@@ -697,7 +692,6 @@ namespace BoonAmber.Test.Api
                 get_pretrain_response = instance.GetPretrain(post_response.SensorId);
                 retry++;
             }
-
             Assert.Equal("Pretrained", get_pretrain_response.State);
 
             // add on configuration fusion and streaming 
@@ -785,10 +779,9 @@ namespace BoonAmber.Test.Api
             Assert.IsType<PostSensorResponse>(post_response);
             Assert.False(string.IsNullOrEmpty(post_response.SensorId));
 
-            // configure sensor with invalid feature count
+            // configure sensor with 100 features
             List<FeatureConfig> features = Enumerable.Repeat(
-                new FeatureConfig(50, 1, 1, submitRule: FeatureConfig.SubmitRuleEnum.Submit),
-                201).ToList();
+                new FeatureConfig(50, 1, 1, submitRule: FeatureConfig.SubmitRuleEnum.Submit), 201).ToList();
 
             var post_config_request = new PostConfigRequest(anomalyHistoryWindow: 1000,
                 learningRateNumerator: 10,
@@ -796,7 +789,7 @@ namespace BoonAmber.Test.Api
                 learningMaxClusters: 1000,
                 learningMaxSamples: 10000000,
                 featureCount: 201,
-                streamingWindowSize: 25,
+                streamingWindowSize: 1,
                 features: features,
                 samplesToBuffer: 1000
             );
@@ -863,7 +856,6 @@ namespace BoonAmber.Test.Api
             List<FeatureConfig> features = new List<FeatureConfig>
                 { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
 
-
             var post_config_request = new PostConfigRequest(anomalyHistoryWindow: 1000,
                 learningRateNumerator: 10,
                 learningRateDenominator: 10000,
@@ -914,7 +906,7 @@ namespace BoonAmber.Test.Api
             var post_sensor_request = new PostSensorRequest(label);
             var post_response = instance.PostSensor(post_sensor_request);
 
-            // configure sensor with invalid feature count
+            // configure sensor
             List<FeatureConfig> features = new List<FeatureConfig>
                 { new FeatureConfig(50, 1, 1, "fancy-label", FeatureConfig.SubmitRuleEnum.Submit) };
 
