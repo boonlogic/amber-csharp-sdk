@@ -581,7 +581,7 @@ namespace BoonAmber.Api
             this.reauth_time = 0;
             this.verify = verify;
 
-            var user_agent = "Boon Logic / amber-csharp-sdk / requests";
+            var user_agent = "BoonLogic/amber-csharp-sdk/requests";
 
             // first load from license file, override from environment if specified
             string license_path = Environment.GetEnvironmentVariable("AMBER_LICENSE_FILE");
