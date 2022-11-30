@@ -46,6 +46,8 @@ namespace BoonAmber.Model
         /// <param name="retryCount">number of restarts that have happened during autotuning (required).</param>
         /// <param name="streamingWindowSize">the current streaming window size that is being used (required).</param>
         /// <param name="totalInferences">inferences since the most recent restart (required).</param>
+        /// <param name="lastModified">Unix time stamp of the last posted stream data (required).</param>
+        /// <param name="lastModifiedDelta">number of seconds since the last posted stream data (required).</param>
         /// <param name="iD">iD (required).</param>
         /// <param name="rI">rI (required).</param>
         /// <param name="sI">sI (required).</param>
@@ -57,7 +59,7 @@ namespace BoonAmber.Model
         /// <param name="nS">nS (required).</param>
         /// <param name="nW">nW (required).</param>
         /// <param name="oM">oM (required).</param>
-        public PostStreamResponse(string state = default(string), string message = default(string), int progress = default(int), int clusterCount = default(int), int retryCount = default(int), int streamingWindowSize = default(int), int totalInferences = default(int), Int32Array iD = default(Int32Array), Uint16Array rI = default(Uint16Array), Uint16Array sI = default(Uint16Array), Uint16Array aD = default(Uint16Array), Uint16Array aH = default(Uint16Array), Float32Array aM = default(Float32Array), Uint16Array aW = default(Uint16Array), Uint16Array nI = default(Uint16Array), Uint16Array nS = default(Uint16Array), Float32Array nW = default(Float32Array), Float32Array oM = default(Float32Array))
+        public PostStreamResponse(string state = default(string), string message = default(string), int progress = default(int), int clusterCount = default(int), int retryCount = default(int), int streamingWindowSize = default(int), int totalInferences = default(int), decimal lastModified = default(decimal), decimal lastModifiedDelta = default(decimal), Int32Array iD = default(Int32Array), Uint16Array rI = default(Uint16Array), Uint16Array sI = default(Uint16Array), Uint16Array aD = default(Uint16Array), Uint16Array aH = default(Uint16Array), Float32Array aM = default(Float32Array), Uint16Array aW = default(Uint16Array), Uint16Array nI = default(Uint16Array), Uint16Array nS = default(Uint16Array), Float32Array nW = default(Float32Array), Float32Array oM = default(Float32Array))
         {
             // to ensure "state" is required (not null)
             if (state == null)
@@ -76,6 +78,8 @@ namespace BoonAmber.Model
             this.RetryCount = retryCount;
             this.StreamingWindowSize = streamingWindowSize;
             this.TotalInferences = totalInferences;
+            this.LastModified = lastModified;
+            this.LastModifiedDelta = lastModifiedDelta;
             // to ensure "iD" is required (not null)
             if (iD == null)
             {
@@ -194,6 +198,20 @@ namespace BoonAmber.Model
         public int TotalInferences { get; set; }
 
         /// <summary>
+        /// Unix time stamp of the last posted stream data
+        /// </summary>
+        /// <value>Unix time stamp of the last posted stream data</value>
+        [DataMember(Name = "lastModified", IsRequired = true, EmitDefaultValue = false)]
+        public decimal LastModified { get; set; }
+
+        /// <summary>
+        /// number of seconds since the last posted stream data
+        /// </summary>
+        /// <value>number of seconds since the last posted stream data</value>
+        [DataMember(Name = "lastModifiedDelta", IsRequired = true, EmitDefaultValue = false)]
+        public decimal LastModifiedDelta { get; set; }
+
+        /// <summary>
         /// Gets or Sets ID
         /// </summary>
         [DataMember(Name = "ID", IsRequired = true, EmitDefaultValue = false)]
@@ -274,6 +292,8 @@ namespace BoonAmber.Model
             sb.Append("  RetryCount: ").Append(RetryCount).Append("\n");
             sb.Append("  StreamingWindowSize: ").Append(StreamingWindowSize).Append("\n");
             sb.Append("  TotalInferences: ").Append(TotalInferences).Append("\n");
+            sb.Append("  LastModified: ").Append(LastModified).Append("\n");
+            sb.Append("  LastModifiedDelta: ").Append(LastModifiedDelta).Append("\n");
             sb.Append("  ID: ").Append(ID).Append("\n");
             sb.Append("  RI: ").Append(RI).Append("\n");
             sb.Append("  SI: ").Append(SI).Append("\n");
@@ -349,6 +369,14 @@ namespace BoonAmber.Model
                 (
                     this.TotalInferences == input.TotalInferences ||
                     this.TotalInferences.Equals(input.TotalInferences)
+                ) &&
+                (
+                    this.LastModified == input.LastModified ||
+                    this.LastModified.Equals(input.LastModified)
+                ) &&
+                (
+                    this.LastModifiedDelta == input.LastModifiedDelta ||
+                    this.LastModifiedDelta.Equals(input.LastModifiedDelta)
                 ) &&
                 (
                     this.ID == input.ID ||
@@ -429,6 +457,8 @@ namespace BoonAmber.Model
                 hashCode = (hashCode * 59) + this.RetryCount.GetHashCode();
                 hashCode = (hashCode * 59) + this.StreamingWindowSize.GetHashCode();
                 hashCode = (hashCode * 59) + this.TotalInferences.GetHashCode();
+                hashCode = (hashCode * 59) + this.LastModified.GetHashCode();
+                hashCode = (hashCode * 59) + this.LastModifiedDelta.GetHashCode();
                 if (this.ID != null)
                 {
                     hashCode = (hashCode * 59) + this.ID.GetHashCode();

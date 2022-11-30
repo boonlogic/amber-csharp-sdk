@@ -460,6 +460,7 @@ namespace BoonAmber.Test.Api
             Assert.Equal(0, post_stream_response.NW[0]);
             Assert.Equal(0, post_stream_response.OM[0]);
             Assert.False(string.IsNullOrEmpty(post_stream_response.State));
+            Assert.IsType<decimal>(post_stream_response.LastModified);
 
             //delete sensor
             var delete_response = instance.DeleteSensor(post_response.SensorId);
@@ -934,6 +935,7 @@ namespace BoonAmber.Test.Api
             var post_outage_response = instance.PostOutage(post_response.SensorId);
             Assert.IsType<PostOutageResponse>(post_outage_response);
             Assert.Equal("Buffering", post_outage_response.State);
+            Assert.IsType<decimal>(post_outage_response.LastModified);
 
             //delete sensor
             var delete_response = instance.DeleteSensor(post_response.SensorId);
