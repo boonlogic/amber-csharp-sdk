@@ -1,4 +1,4 @@
-image: 715859896688.dkr.ecr.us-east-1.amazonaws.com/pipeline-x86-ubuntu:latest
+image: 715859896688.dkr.ecr.us-east-1.amazonaws.com/pipeline-x86-csharp
 
 include:
   - template: 'Workflows/Boon-Pipelines.gitlab-ci.yml'
@@ -22,10 +22,8 @@ variables:
 
 stages:
   - build
-  - format
-  - test-setup
+  - self-test
   - test
-  - package
 
 build:
   stage: build
@@ -38,58 +36,65 @@ build:
     - git checkout ${CI_COMMIT_REF_NAME} || true
     - BRANCH=${CI_COMMIT_REF_NAME} make amber-csharp-sdk-env
     - make amber-csharp-sdk-build
+    - pipelines/expert-api/create-amber-pipeline-vars > amber.env
+    - cat amber.env
   artifacts:
     paths:
-    - ci-root/
+    - ci-root
+    reports:
+      dotenv:
+        - ci-root/amber.env
 
-format:
-  stage: format
+code-check:
+  stage: self-test
   tags:
     - expert-docker
   script:
     - cd ci-root
     - make amber-csharp-sdk-code-check
 
-test-setup:
-  stage: test-setup
+test-v1:
+  stage: test
+  needs: [build]
   tags:
     - expert-docker
+  services:
+    - name: 715859896688.dkr.ecr.us-east-1.amazonaws.com/expert-server:${AMBER_TAG}
+      alias: amber-test-fixture
+  variables:
+    BOON_PRODUCT_ID: amber-cloud
+    BOON_AMBER_PORT: 5007
+    BOON_MAX_INSTANCES: 1
+    MONGO_URI: $V1_MONGO_URI
   script:
-    - cd ci-root
-    - BRANCH=${CI_COMMIT_REF_NAME} make amber-cli-env
-    - make amber-cli-build
-    - BRANCH=${CI_COMMIT_REF_NAME} make expert-api-env
-    - make expert-api-build
+    - ci-root/pipelines/expert-api/create-amberv1-test-config > ${CI_PROJECT_DIR}/ci-root/.Amber.license
+    - cd ${CI_PROJECT_DIR}/ci-root/packages/amber-csharp-sdk/amber-csharp-sdk
+    - export AMBER_TEST_LICENSE_FILE=${CI_PROJECT_DIR}/ci-root/.Amber.license
+    - export AMBER_TEST_LICENSE_ID=v1sdk
+    - make test
   artifacts:
     paths:
-      - ci-root/packages/amber-cli
-      - ci-root/packages/expert-server
+    - ci-root/packages/amber-csharp-sdk/amber-csharp-sdk
 
-test:
+test-v2:
   stage: test
   tags:
     - expert-docker
-  before_script:
-    - dotnet tool install --global dotnet-coverage
-    - cd ci-root/packages/amber-cli/amber-cli
-    - ./amber aop create-test-config --port 9876 > ${CI_PROJECT_DIR}/ci-root/packages/amber-csharp-sdk/amber-csharp-sdk/Amber.license
-    - cd ${CI_PROJECT_DIR}/ci-root/packages/expert-server/expert-api
-    - export PORT=9876
-    - make start-amber-cloud
+  needs: [build]
+  services:
+    - name: 715859896688.dkr.ecr.us-east-1.amazonaws.com/expert-server:${AMBER_TAG}
+      alias: amber-test-fixture
+  variables:
+    BOON_PRODUCT_ID: amber-cloud-v2
+    BOON_AMBER_PORT: 5007
+    BOON_MAX_INSTANCES: 1
+    MONGO_URI: $V2_MONGO_URI
   script:
+    - ci-root/pipelines/expert-api/create-amberv1-test-config > ${CI_PROJECT_DIR}/ci-root/.Amber.license
     - cd ${CI_PROJECT_DIR}/ci-root/packages/amber-csharp-sdk/amber-csharp-sdk
-    - export AMBER_TEST_LICENSE_FILE=${PWD}/Amber.license
-    - export AMBER_TEST_LICENSE_ID=aoc
-    - make test
-
-package:
-  stage: package
-  tags:
-    - expert-docker
-  only:
-    - tags
-  script:
-    - cd ci-root
-    - export PKG_VERSION=${CI_COMMIT_TAG}
-    - export NUGET_API_KEY=${NUGET_API_KEY}
-    - make amber-csharp-sdk-package
+    - export AMBER_TEST_LICENSE_FILE=${CI_PROJECT_DIR}/ci-root/.Amber.license
+    - export AMBER_TEST_LICENSE_ID=v2sdk
+    - echo "make test"
+  artifacts:
+    paths:
+    - ci-root/packages/amber-csharp-sdk/amber-csharp-sdk
